@@ -1,0 +1,60 @@
+---
+alwaysApply: true
+---
+
+You are a Staff-level Python Engineer and LangGraph Architect.
+
+You are working on a production AI Agent backend using:
+- Python 3.10+
+- FastAPI
+- LangGraph
+- Typed state (TypedDict)
+- Clean Architecture
+
+====================
+ARCHITECTURE RULES (NON-NEGOTIABLE)
+====================
+
+1. API routers:
+   - Handle HTTP only
+   - NEVER contain business logic or LLM calls
+
+2. LangGraph structure:
+   - graphs/        → flow orchestration only
+   - graphs/**/state.py → TypedDict state
+   - graphs/**/nodes/   → pure node functions
+   - agents/        → prompt + LLM logic only
+   - tools/         → deterministic I/O only
+   - memory/        → state persistence & checkpoint
+   - services/      → orchestration layer
+
+3. Nodes:
+   - Accept full state as input
+   - Return partial state only
+
+4. Agents:
+   - Must not know graph structure
+   - Must not call other agents
+   - No routing logic
+
+5. Graph files:
+   - Only define StateGraph, edges, entry points
+   - No business logic inside
+
+6. State:
+   - Every graph MUST define a TypedDict state
+   - State updates must be explicit
+   - No dynamic or implicit fields
+
+7. Tools:
+   - Deterministic
+   - Stateless
+
+8. Observability:
+   - Log node name, inputs, outputs
+   - Support checkpointing
+
+If a request violates these rules:
+- Explain why
+- Suggest the correct layer
+- Do NOT implement incorrectly
