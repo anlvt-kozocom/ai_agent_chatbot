@@ -1,37 +1,54 @@
 import os
-from typing import List
+import re
+import json
+from typing import List, Dict, Any, Optional
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-import json
-from typing import List, Dict, Any
-from langchain_core.documents import Document
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+def clean_number(text: Any) -> int:
+    """Extract numeric value from text (e.g., '5000 mAh' -> 5000, '10,000,000' -> 10000000)."""
+    if not text: 
+        return 0
+    if isinstance(text, (int, float)): 
+        return int(text)
+    # Remove commas and dots (separators) to safely find integer sequence
+    clean_text = str(text).replace(',', '').replace('.', '')
+    matches = re.findall(r'(\d+)', clean_text)
+    return int(matches[0]) if matches else 0
 
 def format_device_to_text(brand: str, device: Dict[str, Any]) -> str:
-    """Convert a device JSON object into a text representation."""
+    """Convert a device JSON object into a text representation for RAG."""
     model = device.get("model_name", "Unknown Model")
     specs = device.get("specifications", {})
     
-    text_parts = [f"Name: {brand} {model}"]
+    # Start with high-level summary including new fields
+    text_parts = [f"Product: {brand} {model}"]
     
-    # Flatten specifications for text search
+    if "description" in device:
+        text_parts.append(f"Description: {device['description']}")
+        
+    if "usage" in device:
+        text_parts.append(f"Recommended Usage: {device['usage']}")
+        
+    if "price_range" in device:
+        text_parts.append(f"Market Segment: {device['price_range']}")
+
+    if "price_vnd" in device:
+        text_parts.append(f"Price: {device['price_vnd']}")
+    if "price_usd" in device:
+        text_parts.append(f"Price (USD): {device['price_usd']}")
+
+    # Detailed Specifications
     if specs:
-        text_parts.append("Specifications:")
+        text_parts.append("\nTechnical Specifications:")
         for category, details in specs.items():
             if isinstance(details, dict):
                 detail_str = ", ".join(f"{k}: {v}" for k, v in details.items())
                 text_parts.append(f"- {category}: {detail_str}")
             else:
                 text_parts.append(f"- {category}: {details}")
-    if "price_vnd" in device:
-        text_parts.append(f"Price in VND: {device['price_vnd']}")
-    if "price_usd" in device:
-        text_parts.append(f"Price in USD: {device['price_usd']}")
-    if "price_yen" in device:
-        text_parts.append(f"Price in YEN: {device['price_yen']}")
-        
-    # Add other top-level fields if needed
+    
+    # Add Image URL if available (useful for frontend even if not for search)
     if "imageUrl" in device:
         text_parts.append(f"Image: {device['imageUrl']}")
         
@@ -63,23 +80,45 @@ def load_text_files(directory: str) -> List[Document]:
                         brand_name = brand_entry.get("brand_name", "")
                         devices = brand_entry.get("devices", [])
                         
-                        
                         for device in devices:
                             content = format_device_to_text(brand_name, device)
+                            
+                            # Extract fields for metadata
+                            specs = device.get("specifications", {})
+                            
+                            # 1. Price
                             price_vnd = device.get("price_vnd", "")
-                            price_usd = device.get("price_usd", "")
-                            price_yen = device.get("price_yen", "")
-                            memory = device.get("Memory", {}).get("Internal", "")
-                            battery = device.get("Battery", {}).get("Type", "")
+                            price_val = clean_number(price_vnd)
+                            
+                            # 2. Specs (Battery, Memory)
+                            # Note: Correct path is device -> specifications -> Battery/Memory
+                            bat_info = specs.get("Battery", {}).get("Type", "")
+                            mem_info = specs.get("Memory", {}).get("Internal", "")
+                            
+                            bat_cap = clean_number(bat_info)
+                            
+                            # 3. RAM (Extract from Memory string like '8GB RAM')
+                            ram_match = re.search(r'(\d+)GB RAM', mem_info, re.IGNORECASE)
+                            ram_val = int(ram_match.group(1)) if ram_match else 0
+                            
+                            # Enhanced Metadata for filtering
                             metadata = {
                                 "brand": brand_name,
                                 "model": device.get("model_name"),
+                                # Price info
                                 "price_vnd": price_vnd,
-                                "price_usd": price_usd,
-                                "price_yen": price_yen,
-                                "memory": memory,
-                                "battery": battery
+                                "price_int": price_val, # Use for range filter (e.g. price_int < 10000000)
+                                "price_range": device.get("price_range", "Unknown"),
+                                # Usage/Features
+                                "usage": device.get("usage", "General"),
+                                # Technical Specs (Numeric for filtering)
+                                "ram_gb": ram_val,
+                                "battery_mah": bat_cap,
+                                # Raw info
+                                "memory_info": mem_info,
+                                "battery_info": bat_info
                             }
+                            
                             documents.append(Document(page_content=content, metadata=metadata))
             except Exception as e:
                 print(f"Error reading JSON file {filename}: {e}")
@@ -98,7 +137,7 @@ def split_documents(documents: List[Document], chunk_size: int = 1000, chunk_ove
 def format_requirements(requirements: Dict[str, Any]) -> str:
     """Format requirements dictionary into a readable string."""
     if not requirements:
-        return "Chưa có yêu cầu cụ thể."
+        return "No specific requirements."
     
     lines = []
     for key, value in requirements.items():

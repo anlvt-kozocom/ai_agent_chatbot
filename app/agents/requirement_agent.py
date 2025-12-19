@@ -24,9 +24,17 @@ async def requirement_node(state: AgentState) -> dict:
     
     current_path = state.get("path") or []
     new_path = current_path + ["requirement_node"]
+    
+    # Do NOT overwrite 'answer' from recommendation_node
+    # Instead, we just append the question to the message history
+    # The final output to user will be: Recommendation + Follow-up Question
+    
+    # We need to ensure the final answer combines both if they exist
+    previous_answer = state.get("answer", "")
+    final_answer = f"{previous_answer}\n\n{response_text}" if previous_answer else response_text
 
     return {
         "messages": [AIMessage(content=response_text)],
-        "answer": response_text,
+        "answer": final_answer,
         "path": new_path
     }

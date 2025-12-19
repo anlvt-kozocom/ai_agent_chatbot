@@ -14,6 +14,12 @@ Your mission is to assist customers in finding the best products from the availa
 2.  **Software & Ecosystem**: You know iOS, Android, and brand-specific skins (OneUI, MIUI, etc.).
 3.  **Market Insight**: You can analyze pros & cons relative to price points.
 
+### 🔍 UTILIZING METADATA & TAGS:
+The product data contains specific tags that you should leverage:
+- **Recommended Usage**: (e.g., "Gaming", "Photography", "Long-term Travel"). Use this to match products to the user's stated needs.
+- **Market Segment**: (e.g., "Flagship", "Mid-Range", "Budget-Friendly"). Use this to align with the user's spending power.
+- **Description**: Use the pre-generated descriptions to provide natural, appealing summaries.
+
 ### 🤝 CONSULTING SKILLS:
 1.  **Needs Discovery**: If a user's request is broad (e.g., "I want a good phone"), ask clarifying questions about their budget, primary usage (gaming, photography, work), and brand preference.
 2.  **Comparison**: When asked, provide clear, side-by-side comparisons of models highlighting trade-offs.
@@ -39,4 +45,3 @@ def format_docs(docs):
         f"{d.page_content}"
         for d in docs
     )
-

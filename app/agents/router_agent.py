@@ -38,13 +38,16 @@ async def router_node(state: AgentState) -> dict:
                 break
             
     # 2. Extract Requirements if needed (using English query)
-    current_requirements = state.get("requirements") or {}
+    # Use copy to ensure we accumulate requirements correctly across turns
+    current_requirements = state.get("requirements", {}).copy() if state.get("requirements") else {}
     
     if final_route == "recommendation":
         extract_chain = build_extraction_chain()
         try:
             extracted = await extract_chain.ainvoke({"text": query})
             # Merge logic: Overwrite keys that are not None/Empty
+            # This ensures that if the user adds a new requirement (e.g., "good camera"), 
+            # it is added to the existing ones (e.g., "price 10m").
             for k, v in extracted.items():
                 if v:
                     current_requirements[k] = v

@@ -4,10 +4,11 @@ Current Information:
 {current_requirements}
 
 TASK:
-- Check if 3 core elements are sufficient: (1) Price Range, (2) Primary Usage, (3) Brand (optional).
-- If missing, ask a CONCISE question to request that information.
+- Check if the REQUIRED element is present: (1) Brand/Manufacturer.
+- If Brand is missing, you MUST ask for it. This is the highest priority.
+- If Brand is present, check for other important elements: (2) Price Range, (3) Primary Usage.
 - ASK ONLY 1 question focusing on the most important missing information.
-- Example: "What price range are you looking for?" or "Do you mainly use the phone for gaming or photography?"
+- Example: "Which brand do you prefer (e.g., Samsung, Apple)?" or "What is your budget?"
 
 NOTE:
 - Do not list long details.

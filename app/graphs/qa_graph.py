@@ -12,6 +12,7 @@ def route_decision(state: AgentState) -> str:
     Conditional edge function to determine the next node based on the route and state.
     """
     route = state.get("route", "general")
+    requirements = state.get("requirements", {}) or {}
     
     if route == "product_info":
         return "product_info_node"
@@ -20,7 +21,12 @@ def route_decision(state: AgentState) -> str:
         return "general_node"
         
     # Both Recommendation and Requirement routes now go to recommendation_node first
+    # BUT only if we have the BRAND.
     if route in ["recommendation", "requirement"]:
+        # STRICT REQUIREMENT: Must have brand
+        if not requirements.get("brand"):
+            return "requirement_node"
+            
         return "recommendation_node"
             
     return "general_node"
@@ -32,7 +38,13 @@ def check_recommendation_status(state: AgentState) -> str:
     """
     requirements = state.get("requirements", {})
     
+    # Check for MANDATORY brand
+    if not requirements.get("brand"):
+        return "requirement_node"
+
     # Heuristic: At least one main criteria (price, usage, brand)
+    # Since brand is now mandatory, we technically always have criteria if we pass the first check.
+    # But we keep this for robustness.
     has_criteria = any([
         requirements.get("price"),
         requirements.get("usage"),
@@ -83,6 +95,7 @@ def build_graph():
         {
             "product_info_node": "product_info_node",
             "recommendation_node": "recommendation_node",
+            "requirement_node": "requirement_node",
             "general_node": "general_node"
         }
     )
