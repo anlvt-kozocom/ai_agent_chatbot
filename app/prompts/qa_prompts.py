@@ -10,4 +10,3 @@ If you do not know the answer, honestly state that you don't know; do not fabric
 """
 
 QA_USER_TEMPLATE = """User question: {question}"""
-

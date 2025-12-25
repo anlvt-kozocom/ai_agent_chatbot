@@ -4,11 +4,13 @@ from app.prompts.extraction_prompts import EXTRACTION_SYSTEM_PROMPT
 from app.services.llm import get_llm
 from typing import TypedDict, Optional
 
+
 class Requirements(TypedDict):
     price: Optional[str]
     usage: Optional[str]
     brand: Optional[str]
     specs: Optional[str]
+
 
 def build_extraction_chain():
     """
@@ -16,9 +18,8 @@ def build_extraction_chain():
     Returns a dict.
     """
     llm = get_llm(temperature=0)
-    
+
     prompt = ChatPromptTemplate.from_template(EXTRACTION_SYSTEM_PROMPT)
     parser = JsonOutputParser(pydantic_object=Requirements)
-    
-    return prompt | llm | parser
 
+    return prompt | llm | parser

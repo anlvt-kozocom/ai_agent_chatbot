@@ -40,8 +40,6 @@ USER INPUT:
 {question}
 """)
 
+
 def format_docs(docs):
-    return "\n\n".join(
-        f"{d.page_content}"
-        for d in docs
-    )
+    return "\n\n".join(f"{d.page_content}" for d in docs)
