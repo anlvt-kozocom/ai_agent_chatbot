@@ -1,5 +1,6 @@
 import os
 import uuid
+from typing import Literal
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
@@ -9,6 +10,8 @@ import json
 
 from app.graphs.qa_graph import build_graph
 from app.services.rag_service import rag_service
+from app.utils.callbacks import TokenUsageHandler
+from app.services.usage_store import get_thread_usage
 
 
 @asynccontextmanager
@@ -26,6 +29,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+
 # Global graph instance with checkpointer
 graph = build_graph()
 
@@ -33,6 +37,7 @@ graph = build_graph()
 # Request model for the API
 class ChatRequest(BaseModel):
     message: str
+    language: Literal["en", "vi", "ja"] = "en"
     thread_id: str = Field(
         default_factory=lambda: str(uuid.uuid4()),
         description="Session ID for conversation history",
@@ -51,11 +56,20 @@ async def chat_endpoint(request: ChatRequest):
     Now supports persistence via thread_id.
     """
     try:
+        # Prepare callback handler
+        handler = TokenUsageHandler(request.thread_id)
+
         # Config for the graph execution to point to a specific thread
-        config = {"configurable": {"thread_id": request.thread_id}}
+        config = {
+            "configurable": {"thread_id": request.thread_id},
+            "callbacks": [handler],
+        }
 
         # Prepare input state
-        input_state = {"messages": [HumanMessage(content=request.message)]}
+        input_state = {
+            "messages": [HumanMessage(content=request.message)],
+            "language": request.language,
+        }
 
         # Invoke the graph with config
         result = await graph.ainvoke(input_state, config=config)
@@ -66,9 +80,11 @@ async def chat_endpoint(request: ChatRequest):
         return {
             "thread_id": request.thread_id,
             "question": request.message,
+            "language": request.language,
             "answer": result.get("answer"),
             "path": path,
             "history_count": len(result.get("messages", [])),
+            "token_usage": get_thread_usage(request.thread_id),
         }
 
     except Exception as e:
@@ -82,24 +98,22 @@ async def chat_stream_endpoint(request: ChatRequest):
     Uses Server-Sent Events (SSE) to send token chunks.
     """
     try:
-        # Config for the graph execution to point to a specific thread
-        config = {"configurable": {"thread_id": request.thread_id}}
-
-        # Prepare input state
-        input_state = {"messages": [HumanMessage(content=request.message)]}
+        # We can't easily return token usage in the stream end with this setup unless we send a specific event
+        # But for now, we just attach the callback
+        handler = TokenUsageHandler(request.thread_id)
+        config = {
+            "configurable": {"thread_id": request.thread_id},
+            "callbacks": [handler],
+        }
 
         async def event_generator():
-            # Default language is English until detected otherwise
-            original_language = "en"
-
-            # Nodes that generate the core answer (before translation)
-            core_answer_nodes = {
-                "general_node",
-                "product_info_node",
-                "recommendation_node",
-            }
-
             try:
+                # Prepare input state
+                input_state = {
+                    "messages": [HumanMessage(content=request.message)],
+                    "language": request.language,
+                }
+
                 # Astream events from the graph
                 async for event in graph.astream_events(
                     input_state, config=config, version="v1"
@@ -107,33 +121,21 @@ async def chat_stream_endpoint(request: ChatRequest):
                     kind = event["event"]
                     node = event.get("metadata", {}).get("langgraph_node", "")
 
-                    # 1. Detect Language from language_input_node output
-                    if kind == "on_chain_end" and node == "language_input_node":
-                        output = event["data"].get("output", {})
-                        if output and "original_language" in output:
-                            original_language = output["original_language"]
-
-                    # 2. Filter Stream Events
+                    # Filter Stream Events
                     if kind == "on_chat_model_stream":
-                        # Check if we should stream this node
-                        should_stream = False
+                        # We stream most nodes now as they should output in the requested language directly
+                        # or at least provide useful intermediate info.
+                        # To keep it simple, we stream everything from core nodes.
 
-                        # Always stream the final translation layer
-                        if node == "language_output_node":
-                            should_stream = True
+                        core_nodes = {
+                            "general_node",
+                            "product_info_node",
+                            "recommendation_node",
+                            "requirement_node",
+                            "sales_synthesis_node",
+                        }
 
-                        # Stream core nodes ONLY if language is English (no translation needed)
-                        # If language is NOT English, we hide these because they are "intermediate" (wrong language)
-                        elif node in core_answer_nodes:
-                            if original_language.lower() in [
-                                "en",
-                                "english",
-                                "en-us",
-                                "en-gb",
-                            ]:
-                                should_stream = True
-
-                        if should_stream:
+                        if node in core_nodes:
                             content = event["data"]["chunk"].content
                             if content:
                                 payload = {

@@ -3,9 +3,9 @@ from langchain_core.prompts import ChatPromptTemplate
 ROUTER_PROMPT = ChatPromptTemplate.from_template("""
 You are an intelligent router agent. Your job is to classify the user's input into one of three categories:
 
-1. "product_info": The user is asking specific questions about a particular product's specifications, features, price, or details (e.g., "How much is iPhone 15?", "Does Galaxy S24 have a good camera?", "Compare X and Y").
+1. "product_info": The user is asking specific questions about a product's specifications, features, price, details, or general product information (e.g., "How much is iPhone 15?", "Does Galaxy S24 have a good camera?", "Compare X and Y", "Product info", "Tell me about this phone").
 2. "recommendation": The user is asking for advice, suggestions, OR providing specific preferences/requirements to find a product (e.g., "Suggest a phone under 10 million", "Help me choose a phone", "My budget is 500$", "I prefer Samsung", "I need it for photography").
-3. "general": The user is engaging in casual conversation, greeting, asking for help, or asking general knowledge questions not specific to internal data.
+3. "general": The user is engaging in casual conversation, greeting, asking for help, or asking general knowledge questions not related to specific products.
 
 Input: {question}
 
@@ -18,6 +18,9 @@ Your goal is to welcome customers, establish a friendly connection, and understa
 
 If the user greets you, welcome them warmly and offer your expertise in smartphones and technology.
 If the user asks a general question not related to specific product specs in the database, answer politely based on general knowledge, but steer them back to our product offerings when appropriate.
+
+Current conversation:
+{history}
 
 User: {question}
 """)

@@ -1,10 +1,12 @@
 from app.models.schemas import AgentState
+from app.utils.config import MAX_HISTORY_WINDOW
+from langchain_core.runnables import RunnableConfig
 from app.chains.requirement_chain import build_requirement_chain
 from app.utils.text_processing import format_requirements
 from langchain_core.messages import AIMessage
 
 
-async def requirement_node(state: AgentState) -> dict:
+async def requirement_node(state: AgentState, config: RunnableConfig) -> dict:
     """
     Agent Node: Asks questions to gather more requirements.
     Uses English prompts.
@@ -17,9 +19,16 @@ async def requirement_node(state: AgentState) -> dict:
     # Initialize the chain
     chain = build_requirement_chain()
 
+    language = state.get("language", "en")
+
     # Invoke chain
     response_text = await chain.ainvoke(
-        {"current_requirements": formatted_requirements, "history": messages}
+        {
+            "current_requirements": formatted_requirements,
+            "history": messages[-MAX_HISTORY_WINDOW:],
+            "language": language,
+        },
+        config=config,
     )
 
     current_path = state.get("path") or []
@@ -36,7 +45,7 @@ async def requirement_node(state: AgentState) -> dict:
     )
 
     return {
-        "messages": [AIMessage(content=response_text)],
+        # "messages": [AIMessage(content=response_text)], <-- REMOVED
         "answer": final_answer,
         "path": new_path,
     }

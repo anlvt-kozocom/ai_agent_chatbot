@@ -4,11 +4,10 @@ from app.models.schemas import AgentState
 from app.agents.product_info_agent import product_info_node
 from app.agents.requirement_agent import requirement_node
 from app.agents.recommendation_agent import recommendation_node
+from app.agents.comparison_agent import comparison_node
 from app.agents.router_agent import router_node, general_node
-from app.agents.language_agent import (
-    language_input_node,
-    language_output_node,
-)  # Import new nodes
+from app.agents.sales_agent import sales_synthesis_node
+from app.agents.context_resolution_agent import context_resolution_node
 
 
 def route_decision(state: AgentState) -> str:
@@ -20,6 +19,9 @@ def route_decision(state: AgentState) -> str:
 
     if route == "product_info":
         return "product_info_node"
+
+    if route == "comparison":
+        return "comparison_node"
 
     if route == "general":
         return "general_node"
@@ -47,9 +49,7 @@ def check_recommendation_status(state: AgentState) -> str:
     if not requirements.get("brand"):
         return "requirement_node"
 
-    # Heuristic: At least one main criteria (price, usage, brand)
-    # Since brand is now mandatory, we technically always have criteria if we pass the first check.
-    # But we keep this for robustness.
+    # Heuristic: At least one main criteria
     has_criteria = any(
         [
             requirements.get("price"),
@@ -68,8 +68,8 @@ def check_recommendation_status(state: AgentState) -> str:
     )
 
     if has_criteria:
-        # Enough info -> Finish
-        return "language_output_node"
+        # Enough info -> Finish (Synthesize)
+        return "sales_synthesis_node"
     else:
         # Not enough info -> Ask questions
         return "requirement_node"
@@ -83,18 +83,19 @@ def build_graph():
     workflow = StateGraph(AgentState)
 
     # Add nodes
-    workflow.add_node("language_input_node", language_input_node)  # Pre-processing
+    workflow.add_node("context_resolution_node", context_resolution_node)
     workflow.add_node("router_node", router_node)
     workflow.add_node("product_info_node", product_info_node)
     workflow.add_node("requirement_node", requirement_node)
     workflow.add_node("recommendation_node", recommendation_node)
+    workflow.add_node("comparison_node", comparison_node)
     workflow.add_node("general_node", general_node)
-    workflow.add_node("language_output_node", language_output_node)  # Post-processing
+    workflow.add_node("sales_synthesis_node", sales_synthesis_node)  # Final synthesis
 
     # Define edges
-    # Start -> Detect Language -> Router
-    workflow.add_edge(START, "language_input_node")
-    workflow.add_edge("language_input_node", "router_node")
+    # Start -> Context Resolution -> Router
+    workflow.add_edge(START, "context_resolution_node")
+    workflow.add_edge("context_resolution_node", "router_node")
 
     # Conditional edge from Router
     workflow.add_conditional_edges(
@@ -102,28 +103,32 @@ def build_graph():
         route_decision,
         {
             "product_info_node": "product_info_node",
+            "product_info_node": "product_info_node",
             "recommendation_node": "recommendation_node",
+            "comparison_node": "comparison_node",
             "requirement_node": "requirement_node",
             "general_node": "general_node",
         },
     )
 
-    # Processing nodes -> Language Output -> End
-    workflow.add_edge("product_info_node", "language_output_node")
-    workflow.add_edge("requirement_node", "language_output_node")
+    # Processing nodes -> Sales Synthesis -> End
+    workflow.add_edge("product_info_node", "sales_synthesis_node")
+    workflow.add_edge("comparison_node", "sales_synthesis_node")
+    workflow.add_edge("requirement_node", "sales_synthesis_node")
 
     # Conditional edge from Recommendation
     workflow.add_conditional_edges(
         "recommendation_node",
         check_recommendation_status,
         {
-            "language_output_node": "language_output_node",
+            "sales_synthesis_node": "sales_synthesis_node",
             "requirement_node": "requirement_node",
         },
     )
 
-    workflow.add_edge("general_node", "language_output_node")
+    workflow.add_edge("general_node", "sales_synthesis_node")
 
-    workflow.add_edge("language_output_node", END)
+    # Final step
+    workflow.add_edge("sales_synthesis_node", END)
 
     return workflow.compile(checkpointer=checkpointer)

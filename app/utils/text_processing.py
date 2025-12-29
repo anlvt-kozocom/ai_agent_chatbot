@@ -6,6 +6,40 @@ from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
+I18N_LABELS = {
+    "en": {
+        "product": "Product",
+        "description": "Description",
+        "usage": "Recommended Usage",
+        "market_segment": "Market Segment",
+        "price": "Price",
+        "price_usd": "Price (USD)",
+        "tech_specs": "Technical Specifications",
+        "image": "Image",
+    },
+    "vi": {
+        "product": "Sản phẩm",
+        "description": "Mô tả",
+        "usage": "Sử dụng đề xuất",
+        "market_segment": "Phân khúc thị trường",
+        "price": "Giá",
+        "price_usd": "Giá (USD)",
+        "tech_specs": "Thông số kỹ thuật",
+        "image": "Hình ảnh",
+    },
+    "ja": {
+        "product": "製品",
+        "description": "説明",
+        "usage": "推奨される使用法",
+        "market_segment": "市場セグメント",
+        "price": "価格",
+        "price_usd": "価格 (USD)",
+        "tech_specs": "技術仕様",
+        "image": "画像",
+    },
+}
+
+
 def clean_number(text: Any) -> int:
     """Extract numeric value from text (e.g., '5000 mAh' -> 5000, '10,000,000' -> 10000000)."""
     if not text:
@@ -18,31 +52,33 @@ def clean_number(text: Any) -> int:
     return int(matches[0]) if matches else 0
 
 
-def format_device_to_text(brand: str, device: Dict[str, Any]) -> str:
+def format_device_to_text(brand: str, device: Dict[str, Any], lang: str = "en") -> str:
     """Convert a device JSON object into a text representation for RAG."""
+    labels = I18N_LABELS.get(lang, I18N_LABELS["en"])
+
     model = device.get("model_name", "Unknown Model")
     specs = device.get("specifications", {})
 
     # Start with high-level summary including new fields
-    text_parts = [f"Product: {brand} {model}"]
+    text_parts = [f"{labels['product']}: {brand} {model}"]
 
     if "description" in device:
-        text_parts.append(f"Description: {device['description']}")
+        text_parts.append(f"{labels['description']}: {device['description']}")
 
     if "usage" in device:
-        text_parts.append(f"Recommended Usage: {device['usage']}")
+        text_parts.append(f"{labels['usage']}: {device['usage']}")
 
     if "price_range" in device:
-        text_parts.append(f"Market Segment: {device['price_range']}")
+        text_parts.append(f"{labels['market_segment']}: {device['price_range']}")
 
     if "price_vnd" in device:
-        text_parts.append(f"Price: {device['price_vnd']}")
+        text_parts.append(f"{labels['price']}: {device['price_vnd']}")
     if "price_usd" in device:
-        text_parts.append(f"Price (USD): {device['price_usd']}")
+        text_parts.append(f"{labels['price_usd']}: {device['price_usd']}")
 
     # Detailed Specifications
     if specs:
-        text_parts.append("\nTechnical Specifications:")
+        text_parts.append(f"\n{labels['tech_specs']}:")
         for category, details in specs.items():
             if isinstance(details, dict):
                 detail_str = ", ".join(f"{k}: {v}" for k, v in details.items())
@@ -52,7 +88,7 @@ def format_device_to_text(brand: str, device: Dict[str, Any]) -> str:
 
     # Add Image URL if available (useful for frontend even if not for search)
     if "imageUrl" in device:
-        text_parts.append(f"Image: {device['imageUrl']}")
+        text_parts.append(f"{labels['image']}: {device['imageUrl']}")
 
     return "\n".join(text_parts)
 
@@ -74,6 +110,15 @@ def load_text_files(directory: str) -> List[Document]:
         # Handle JSON files
         if filename.endswith(".json"):
             try:
+                # Detect language from filename (e.g., phone_vi.json -> vi)
+                lang = "en"
+                if "_vi.json" in filename:
+                    lang = "vi"
+                elif "_ja.json" in filename:
+                    lang = "ja"
+                elif "_en.json" in filename:
+                    lang = "en"
+
                 with open(filepath, "r", encoding="utf-8") as f:
                     data = json.load(f)
 
@@ -84,7 +129,9 @@ def load_text_files(directory: str) -> List[Document]:
                         devices = brand_entry.get("devices", [])
 
                         for device in devices:
-                            content = format_device_to_text(brand_name, device)
+                            content = format_device_to_text(
+                                brand_name, device, lang=lang
+                            )
 
                             # Extract fields for metadata
                             specs = device.get("specifications", {})
@@ -110,6 +157,7 @@ def load_text_files(directory: str) -> List[Document]:
                             metadata = {
                                 "brand": brand_name,
                                 "model": device.get("model_name"),
+                                "language": lang,
                                 # Price info
                                 "price_vnd": price_vnd,
                                 "price_int": price_val,  # Use for range filter (e.g. price_int < 10000000)

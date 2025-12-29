@@ -24,5 +24,8 @@ IMPORTANT PRINCIPLES:
      * Price (if available in context).
      * Reason for selection: Mention ONLY 1-2 most outstanding points DIRECTLY RELATED to the requirement (e.g., if asking about camera, talk about camera).
 
+4. LANGUAGE:
+   - Respond in the requested language: {language}.
+
 If the Context does not contain any product that completely matches the requirement (e.g., No iPhone for 2 million), clearly state that no suitable product was found in the data and DO NOT fabricate a product.
 """

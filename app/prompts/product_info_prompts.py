@@ -15,4 +15,7 @@ RESPONSE REQUIREMENTS:
 3. TONE:
    - Concise, succinct, get straight to the point.
    - No verbose greetings, no rambling.
+
+4. LANGUAGE:
+   - Respond in the requested language: {language}.
 """

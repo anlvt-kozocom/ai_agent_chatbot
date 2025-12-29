@@ -1,11 +1,11 @@
 import os
-import shutil
 import time
 from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv
 
 from langchain_community.vectorstores import FAISS
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_community.retrievers import BM25Retriever
 from langchain_core.documents import Document
 from langchain_core.retrievers import BaseRetriever
@@ -47,18 +47,27 @@ class RAGService:
         self,
         data_dir: str = "data/clean",
         index_dir: str = "data/vector_store",
-        embedding_model: str = "models/text-embedding-004",
     ):
         self.data_dir = data_dir
         self.index_dir = index_dir
-
-        # Configure embeddings with request options if possible, but basic init is usually fine
-        # We rely on batching logic in _build_index to avoid 500s
-        self.embeddings = GoogleGenerativeAIEmbeddings(
-            model=embedding_model,
-            google_api_key=os.getenv("GOOGLE_API_KEY"),
-            task_type="retrieval_document",
-        )
+        self.embedding_provider = os.getenv("EMBEDDING_PROVIDER", "google")
+        # Configure embeddings based on provider
+        if self.embedding_provider == "openai":
+            if not os.getenv("OPENAI_API_KEY"):
+                raise ValueError("OPENAI_API_KEY environment variable is not set")
+            model_name = os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
+            self.embeddings = OpenAIEmbeddings(
+                model=model_name, openai_api_key=os.getenv("OPENAI_API_KEY")
+            )
+        else:
+            embedding_model = os.getenv(
+                "GOOGLE_EMBEDDING_MODEL", "models/text-embedding-004"
+            )
+            self.embeddings = GoogleGenerativeAIEmbeddings(
+                model=embedding_model,
+                google_api_key=os.getenv("GOOGLE_API_KEY"),
+                task_type="retrieval_document",
+            )
         self.vector_store: Optional[FAISS] = None
         self.retriever: Optional[BaseRetriever] = None
 
@@ -184,7 +193,38 @@ class RAGService:
             )
             self.retriever = faiss_retriever
 
-    def get_retriever(self):
+    def get_retriever(self, language: Optional[str] = None):
+        """
+        Get the retriever, optionally filtered by language.
+        """
+        if not self.retriever:
+            print("Retriever not ready.")
+            return None
+
+        # If no language specified or hybrid retrieval setup is complex to clone,
+        # return existing retriever.
+        # Ideally, we should apply filter to the underlying vector store retriever here.
+        # Since self.retriever is instantiated once, we might need to instantiate a new one with filter
+        # or use search_kwargs dynamically if the retriever chain supports it.
+
+        # Simple approach: If language is provided, return a fresh retriever from vector store with filter.
+        # This bypasses the Hybrid setup if filtering is needed, or we reconstruct Hybrid.
+        # For simplicity and correctness with FAISS:
+
+        if language and self.vector_store:
+            # Create a specific retriever for this request with metadata filtering
+            # Note: FAISS supports filtering via search_kwargs={'filter': {'key': 'value'}}
+            filter_dict = {"language": language}
+
+            faiss_retriever = self.vector_store.as_retriever(
+                search_kwargs={"k": 4, "filter": filter_dict}
+            )
+
+            # If we want to maintain Hybrid, we need BM25 to support filtering too, which is hard.
+            # So if language filtering is active, we might stick to Vector Search only for now,
+            # which is often sufficient and safer ensuring no wrong-language docs appear.
+            return QueryExpansionRetriever(base_retriever=faiss_retriever)
+
         if self.retriever:
             return QueryExpansionRetriever(base_retriever=self.retriever)
         return self.retriever
