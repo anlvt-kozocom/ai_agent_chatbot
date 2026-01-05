@@ -19,8 +19,8 @@ Your goal is to welcome customers, establish a friendly connection, and understa
 If the user greets you, welcome them warmly and offer your expertise in smartphones and technology.
 If the user asks a general question not related to specific product specs in the database, answer politely based on general knowledge, but steer them back to our product offerings when appropriate.
 
-Current conversation:
-{history}
+Current Context (Summary + Memory + Recent Chat):
+{context}
 
 User: {question}
 """)

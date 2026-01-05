@@ -21,35 +21,35 @@ async def product_info_node(state: AgentState, config: RunnableConfig) -> dict:
     language = state.get("language", "en")  # Default to english if not set
 
     # Slice history to window to avoid token overflow
-    # Take last MAX_HISTORY_WINDOW messages excluding the current query (which is at -1)
-    history = messages[-(MAX_HISTORY_WINDOW + 1) : -1]
+    # history = messages[-(MAX_HISTORY_WINDOW + 1) : -1] # DEPRECATED
 
-    # 1. Retrieve (Filtered by Language)
-    # Pass language to get_retriever for filtering
-    retriever = rag_service.get_retriever(language=language)
+    # Get Strategy from State (Set by Retrieval Strategy Node)
+    retrieval_strategy = state.get("retrieval_strategy", {})
+    strategy_type = retrieval_strategy.get("strategy", "VECTOR_SEARCH")
 
-    if not retriever:
-        return {"answer": "Search system not ready."}
+    print(
+        f"DEBUG: Product Info Node using pre-retrieved docs via strategy: {strategy_type}"
+    )
 
-    docs = await retriever.ainvoke(query)
-    context = format_docs(docs)
+    # USE PRECISION DOCS FROM STATE
+    docs = state.get("precision_docs", [])
+
+    # Format context
+    context = format_docs(docs) if docs else "No additional product information found."
+
+    # Generate Compressed Conversation Context
+    from app.services.memory_service import compress_context
+
+    conversation_context = compress_context(state)
 
     # 2. Call Chain
-    # The chain prompt should ideally adapt to language or the model should handle it.
-    # Current prompt is in English but model is multilingual (GPT/Gemini).
-    # Ideally we should also instruct the model to answer in the specific language.
-    # For now, we assume the model follows the language of the context/query or we can add instructions.
-
     chain = build_product_info_chain()
 
-    # We might want to pass target language to the prompt if needed,
-    # but let's stick to existing chain interface for now.
     response_text = await chain.ainvoke(
         {
             "question": query,
             "context": context,
-            "history": history,
-            "history": history,
+            "conversation_context": conversation_context,
             "language": language,
         },
         config=config,
@@ -59,7 +59,6 @@ async def product_info_node(state: AgentState, config: RunnableConfig) -> dict:
     new_path = current_path + ["product_info_node"]
 
     return {
-        # "messages": [AIMessage(content=response_text)],  <-- REMOVED to avoid history pollution
         "answer": response_text,
         "path": new_path,
     }

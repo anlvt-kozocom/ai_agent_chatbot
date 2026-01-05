@@ -27,11 +27,19 @@ async def sales_synthesis_node(state: AgentState, config: RunnableConfig) -> dic
     summary_chain = build_summarization_chain()
     summary = await summary_chain.ainvoke({"text": sales_response}, config=config)
 
+    # NEW: Update Global Summary Memory
+    from app.services.memory_service import summarize_conversation
+
+    # We update summary memory based on current state (which has history BEFORE this response)
+    # This prepares the summary for the NEXT turn.
+    updated_summary_memory = await summarize_conversation(state)
+
     # Update state
     # We return the FULL 'answer' so the API can return it to the user.
     # But we return 'messages' containing the SUMMARY so LangGraph adds the summary to history.
     return {
         "messages": [AIMessage(content=summary)],
         "answer": sales_response,  # API uses this
-        "path": ["sales_synthesis_node"],
+        "path": (state.get("path") or []) + ["sales_synthesis_node"],
+        "summary_memory": updated_summary_memory,
     }

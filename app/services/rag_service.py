@@ -4,8 +4,8 @@ from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv
 
 from langchain_community.vectorstores import FAISS
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_openai import OpenAIEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
+from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_community.retrievers import BM25Retriever
 from langchain_core.documents import Document
 from langchain_core.retrievers import BaseRetriever
@@ -70,6 +70,15 @@ class RAGService:
             )
         self.vector_store: Optional[FAISS] = None
         self.retriever: Optional[BaseRetriever] = None
+
+        # Initialize small LLM for reranking (cheap model)
+        # Using 4o-mini or gemini-flash logic based on env
+        if self.embedding_provider == "openai":
+            self.rerank_llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+        else:
+            self.rerank_llm = ChatGoogleGenerativeAI(
+                model="gemini-1.5-flash", temperature=0
+            )
 
     def initialize(self, reload_data: bool = False):
         """
@@ -193,41 +202,147 @@ class RAGService:
             )
             self.retriever = faiss_retriever
 
+    async def recall(
+        self, strategy: str, query: str, top_k: int = 20, language: Optional[str] = None
+    ) -> List[Document]:
+        """
+        Recall Stage: Broadly retrieve potentially relevant documents.
+        Maximized for recall, not precision.
+        """
+        if not self.vector_store:
+            print("Vector store not initialized.")
+            return []
+
+        search_kwargs = {"k": top_k}
+        if language:
+            search_kwargs["filter"] = {"language": language}
+
+        docs = []
+        if strategy == "NO_RAG":
+            return []
+
+        elif strategy == "SQL_LOOKUP":
+            # Simulate SQL by strict vector search + filtering (if we had specific metadata)
+            # For recall, we still want to grab a few candidates
+            docs = await self.vector_store.asimilarity_search(query, **search_kwargs)
+
+        else:
+            # VECTOR_SEARCH, HYBRID, MULTI_PRODUCT
+            # For now, default to Vector Search as the base for Recall
+            # (Hybrid logic from existing code could be adapted here if strictly needed)
+            docs = await self.vector_store.asimilarity_search(query, **search_kwargs)
+
+        return docs
+
+    async def precision(
+        self, docs: List[Document], strategy_config: Dict[str, Any], query: str = ""
+    ) -> List[Document]:
+        """
+        Precision Stage: Refine candidates.
+        - Deduplicate
+        - Rule-Based Scoring (Metadata)
+        - LLM Reranking (Cheap)
+        """
+        if not docs:
+            return []
+
+        # 1. Deduplicate (by content hash)
+        unique_docs = {}
+        for doc in docs:
+            # Simple dedup key: first 100 chars
+            key = doc.page_content[:100]
+            if key not in unique_docs:
+                unique_docs[key] = {"doc": doc, "score": 0.0, "reason": ""}
+
+        candidates = list(unique_docs.values())
+        print(f"DEBUG: Precision -> Deduplicated to {len(candidates)} candidates.")
+
+        # 2. Rule-Based Scoring (Metadata)
+        filters = strategy_config.get("filters", {})
+
+        for item in candidates:
+            doc = item["doc"]
+            metadata = doc.metadata
+
+            # Brand Match
+            target_brand = filters.get("brand")
+            if (
+                target_brand
+                and str(target_brand).lower() in str(metadata.get("brand", "")).lower()
+            ):
+                item["score"] += 5.0
+                item["reason"] += "[Brand Match] "
+
+            # Price Match (Heuristic)
+            target_price = filters.get("price")
+            if target_price:
+                if str(target_price) in doc.page_content:
+                    item["score"] += 3.0
+                    item["reason"] += "[Price Mention] "
+
+        # 3. LLM Reranking
+        rerank = strategy_config.get("rerank", False)
+        # Trigger if rerank=True, even for 0 candidates (handled above), but max 20 to save cost
+        if rerank and 0 < len(candidates) <= 20:
+            print("DEBUG: Precision -> Triggering LLM Reranking...")
+            try:
+                # Prepare batch context
+                doc_texts = []
+                for i, item in enumerate(candidates):
+                    # Truncate content for speed/cost
+                    content_snippet = item["doc"].page_content[:400].replace("\n", " ")
+                    doc_texts.append(f"Doc {i}: {content_snippet}")
+
+                context_str = "\n".join(doc_texts)
+
+                prompt = f'''You are a relevance ranker. Rank the following documents based on their relevance to the query: "{query}".
+Return ONLY the Document IDs (e.g., "Doc 0", "Doc 1") of the top 5 most relevant documents, in order of relevance.
+If a document is irrelevant, do not include it.
+
+Documents:
+{context_str}'''
+
+                response = await self.rerank_llm.ainvoke(prompt)
+                response_text = response.content
+                print(f"DEBUG: Rerank Output: {response_text[:100]}...")
+
+                import re
+
+                matches = re.findall(r"Doc (\d+)", response_text)
+
+                rank_score_boost = 10.0
+                for rank, doc_idx_str in enumerate(matches):
+                    try:
+                        idx = int(doc_idx_str)
+                        if 0 <= idx < len(candidates):
+                            boost = rank_score_boost - rank
+                            if boost < 1:
+                                boost = 1
+                            candidates[idx]["score"] += boost
+                            candidates[idx]["reason"] += f"[LLM Rank {rank + 1}] "
+                    except ValueError:
+                        continue
+
+            except Exception as e:
+                print(f"Warning: LLM Reranking failed: {e}")
+
+        # 4. Selection
+        candidates.sort(key=lambda x: x["score"], reverse=True)
+
+        # Debug Log
+        for i, c in enumerate(candidates[:3]):
+            print(f"DEBUG: Top {i + 1}: Score={c['score']}, Reason={c['reason']}")
+
+        final_top_k = strategy_config.get("top_k", 4)
+        top_candidates = [x["doc"] for x in candidates[:final_top_k]]
+
+        return top_candidates
+
+    # Deprecated or Internal Wrapper
     def get_retriever(self, language: Optional[str] = None):
-        """
-        Get the retriever, optionally filtered by language.
-        """
-        if not self.retriever:
-            print("Retriever not ready.")
-            return None
-
-        # If no language specified or hybrid retrieval setup is complex to clone,
-        # return existing retriever.
-        # Ideally, we should apply filter to the underlying vector store retriever here.
-        # Since self.retriever is instantiated once, we might need to instantiate a new one with filter
-        # or use search_kwargs dynamically if the retriever chain supports it.
-
-        # Simple approach: If language is provided, return a fresh retriever from vector store with filter.
-        # This bypasses the Hybrid setup if filtering is needed, or we reconstruct Hybrid.
-        # For simplicity and correctness with FAISS:
-
-        if language and self.vector_store:
-            # Create a specific retriever for this request with metadata filtering
-            # Note: FAISS supports filtering via search_kwargs={'filter': {'key': 'value'}}
-            filter_dict = {"language": language}
-
-            faiss_retriever = self.vector_store.as_retriever(
-                search_kwargs={"k": 4, "filter": filter_dict}
-            )
-
-            # If we want to maintain Hybrid, we need BM25 to support filtering too, which is hard.
-            # So if language filtering is active, we might stick to Vector Search only for now,
-            # which is often sufficient and safer ensuring no wrong-language docs appear.
-            return QueryExpansionRetriever(base_retriever=faiss_retriever)
-
-        if self.retriever:
-            return QueryExpansionRetriever(base_retriever=self.retriever)
-        return self.retriever
+        # Kept for backward compatibility if any legacy code calls it,
+        # but new flow should use recall()
+        return self.vector_store.as_retriever() if self.vector_store else None
 
 
 # Singleton instance

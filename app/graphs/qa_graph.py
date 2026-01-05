@@ -8,27 +8,33 @@ from app.agents.comparison_agent import comparison_node
 from app.agents.router_agent import router_node, general_node
 from app.agents.sales_agent import sales_synthesis_node
 from app.agents.context_resolution_agent import context_resolution_node
+from app.agents.retrieval_strategy_agent import retrieval_strategy_node
+from app.agents.recall_agent import recall_node
+from app.agents.precision_agent import precision_node
 
 
 def route_decision(state: AgentState) -> str:
     """
     Conditional edge function to determine the next node based on the route and state.
     """
-    route = state.get("route", "general")
+    route = state.get("route", "GENERAL")
+    # Normalize just in case, though it should be uppercase from router
+    if route:
+        route = route.upper()
+
     requirements = state.get("requirements", {}) or {}
 
-    if route == "product_info":
+    if route == "PRODUCT_INFO":
         return "product_info_node"
 
-    if route == "comparison":
+    if route == "COMPARISON":
         return "comparison_node"
 
-    if route == "general":
+    if route == "GENERAL":
         return "general_node"
 
-    # Both Recommendation and Requirement routes now go to recommendation_node first
-    # BUT only if we have the BRAND.
-    if route in ["recommendation", "requirement"]:
+    # RECOMMENDATION route (previously handled requirement too)
+    if route == "RECOMMENDATION":
         # STRICT REQUIREMENT: Must have brand
         if not requirements.get("brand"):
             return "requirement_node"
@@ -85,6 +91,9 @@ def build_graph():
     # Add nodes
     workflow.add_node("context_resolution_node", context_resolution_node)
     workflow.add_node("router_node", router_node)
+    workflow.add_node("retrieval_strategy_node", retrieval_strategy_node)
+    workflow.add_node("recall_node", recall_node)
+    workflow.add_node("precision_node", precision_node)
     workflow.add_node("product_info_node", product_info_node)
     workflow.add_node("requirement_node", requirement_node)
     workflow.add_node("recommendation_node", recommendation_node)
@@ -97,12 +106,18 @@ def build_graph():
     workflow.add_edge(START, "context_resolution_node")
     workflow.add_edge("context_resolution_node", "router_node")
 
-    # Conditional edge from Router
+    # Router -> Retrieval Strategy (MANDATORY intermediate step)
+    workflow.add_edge("router_node", "retrieval_strategy_node")
+
+    # Retrieval Strategy -> Recall -> Precision
+    workflow.add_edge("retrieval_strategy_node", "recall_node")
+    workflow.add_edge("recall_node", "precision_node")
+
+    # Conditional edge from Precision Node (uses Route to determine next step)
     workflow.add_conditional_edges(
-        "router_node",
+        "precision_node",
         route_decision,
         {
-            "product_info_node": "product_info_node",
             "product_info_node": "product_info_node",
             "recommendation_node": "recommendation_node",
             "comparison_node": "comparison_node",

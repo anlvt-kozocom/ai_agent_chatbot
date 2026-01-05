@@ -19,12 +19,8 @@ async def recommendation_node(state: AgentState, config: RunnableConfig) -> dict
         # Fallback to translated query
         search_query = state.get("translated_query", "")
 
-    # 2. Retrieve documents (English)
-    retriever = rag_service.get_retriever()
-    if not retriever:
-        return {"answer": "System not ready."}
-
-    docs = await retriever.ainvoke(search_query)
+    # 2. Use Precision Docs from State (Already retrieved based on these requirements)
+    docs = state.get("precision_docs", [])
     context = format_docs(docs)
     # 3. Call Recommendation Chain (English)
     chain = build_recommendation_chain()

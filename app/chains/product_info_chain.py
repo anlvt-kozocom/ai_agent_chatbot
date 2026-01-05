@@ -17,7 +17,6 @@ def build_product_info_chain():
     prompt = ChatPromptTemplate.from_messages(
         [
             ("system", PRODUCT_INFO_SYSTEM_PROMPT),
-            MessagesPlaceholder(variable_name="history"),
             ("human", "{question}"),
         ]
     )

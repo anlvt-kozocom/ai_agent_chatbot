@@ -19,12 +19,8 @@ async def comparison_node(state: AgentState, config: RunnableConfig) -> dict:
     query = state.get("standalone_query") or messages[-1].content
     language = state.get("language", "en")
 
-    # 1. Retrieve (Filtered by Language)
-    retriever = rag_service.get_retriever(language=language)
-    if not retriever:
-        return {"answer": "Search system not ready."}
-
-    docs = await retriever.ainvoke(query)
+    # 1. Use Precision Docs from State
+    docs = state.get("precision_docs", [])
     context = format_docs(docs)
 
     # 2. Call Chain
