@@ -34,12 +34,17 @@ Sigma Chat Box is a high-performance, modern landing page built with **React** a
 
 ### 2. Installation
 
-**Step 1: Install dependencies**
+**Step 1: Create environment file**
+```bash
+cp .env.example .env
+```
+
+**Step 2: Install dependencies**
 ```bash
 npm install
 ```
 
-**Step 2: Run the development server**
+**Step 3: Run the development server**
 ```bash
 npm run dev
 ```
