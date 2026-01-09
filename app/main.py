@@ -95,7 +95,7 @@ async def chat_endpoint(request: ChatRequest):
 async def chat_stream_endpoint(request: ChatRequest):
     """
     Endpoint to stream the response from the QA Agent Graph.
-    Uses Server-Sent Events (SSE) to send token chunks.
+    Uses Server-Sent Events (SSE) to send token chunks and a final metadata event.
     """
     try:
         # We can't easily return token usage in the stream end with this setup unless we send a specific event
@@ -114,12 +114,23 @@ async def chat_stream_endpoint(request: ChatRequest):
                     "language": request.language,
                 }
 
+                accumulated_answer = ""
+                path_set = set()  # Track unique nodes
+                final_path = []  # Maintain order if needed, or just list of visited nodes
+
                 # Astream events from the graph
                 async for event in graph.astream_events(
                     input_state, config=config, version="v1"
                 ):
                     kind = event["event"]
                     node = event.get("metadata", {}).get("langgraph_node", "")
+
+                    if node:
+                        path_set.add(node)
+                        # Only add to ordered path if it's new or we want to track every step
+                        # Matching /chat logic which takes result.get("path") - likely the nodes visited
+                        if not final_path or final_path[-1] != node:
+                            final_path.append(node)
 
                     # Filter Stream Events
                     if kind == "on_chat_model_stream":
@@ -133,17 +144,40 @@ async def chat_stream_endpoint(request: ChatRequest):
                             "recommendation_node",
                             "requirement_node",
                             "sales_synthesis_node",
+                            "comparison_node",  # Added comparison node just in case
                         }
 
                         if node in core_nodes:
                             content = event["data"]["chunk"].content
                             if content:
+                                accumulated_answer += content
                                 payload = {
                                     "event": kind,
                                     "node": node,
                                     "content": content,
                                 }
                                 yield f"data: {json.dumps(payload)}\n\n"
+
+                # Fetch final usage and state
+                token_usage = get_thread_usage(request.thread_id)
+
+                # Get history count from current state
+                current_state = await graph.aget_state(config)
+                history_count = len(current_state.values.get("messages", []))
+                final_answer = current_state.values.get("answer", "")
+
+                # Final metadata event
+                final_payload = {
+                    "event": "metadata",
+                    "thread_id": request.thread_id,
+                    "question": request.message,
+                    "language": request.language,
+                    "answer": final_answer,
+                    "path": final_path,
+                    "history_count": history_count,
+                    "token_usage": token_usage,
+                }
+                yield f"data: {json.dumps(final_payload)}\n\n"
 
                 yield "data: [DONE]\n\n"
             except Exception as e:

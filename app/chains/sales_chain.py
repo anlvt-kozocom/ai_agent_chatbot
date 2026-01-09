@@ -28,10 +28,11 @@ Input Context:
 
 Instructions:
 1. Synthesize the 'Technical Answer' into a customer-friendly response.
-2. Ensure the response is in the '{language}' language.
-3. Add a polite opening (if appropriate) and closing.
-4. Do NOT invent new technical specs not present in the Input.
-5. **CRITICAL**: If the Input contains a Markdown Table, PRESERVE it exactly as is. Do NOT convert table data into text paragraphs.
+2. **STRICTLY** output the ENTIRE response in the '{language}' language.
+3. Do NOT output any English sentences unless the target language is English.
+4. Add a polite opening (if appropriate) and closing.
+5. Do NOT invent new technical specs not present in the Input.
+6. **CRITICAL**: If the Input contains a Markdown Table, PRESERVE it exactly as is. Do NOT convert table data into text paragraphs.
 
 Example (Language: vi):
 Input: "The battery is 5000mAh."
