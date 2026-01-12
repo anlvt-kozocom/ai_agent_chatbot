@@ -46,10 +46,10 @@ export const geminiService = {
       // Use relative path - Vite proxy will forward to API_BASE_URL
       const { data } = await axios.post(
         `/chat/stream`,
-        { message: userInput, thread_id: threadId , language: language},
-        { 
+        { message: userInput, thread_id: threadId, language: language },
+        {
           responseType: "stream",
-          adapter: "fetch"
+          adapter: "fetch",
         }
       );
 
@@ -67,13 +67,12 @@ export const geminiService = {
 
         for (const line of lines) {
           if (!line.startsWith("data: ")) continue;
-          
           const content = line.substring(6).trim();
           if (content === "[DONE]") return;
 
           try {
             const parsed = JSON.parse(content);
-            if (parsed.event === "on_chat_model_stream" && parsed.content) {
+            if (parsed.content) {
               yield parsed.content;
             }
           } catch {

@@ -1,35 +1,119 @@
-
-import React from 'react';
+import React, { useState } from "react";
+import { BrandCategory } from "../types";
 
 interface NavbarProps {
-  scrolled: boolean;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+  onResetBrand: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ scrolled }) => {
+const Navbar: React.FC<NavbarProps> = ({
+  searchQuery,
+  setSearchQuery,
+  onResetBrand,
+}) => {
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-5'}`}>
-      <div className="container mx-auto px-6 flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 bg-gradient-to-tr from-rose-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-rose-200">
-             <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Sigma&backgroundColor=transparent" alt="Sigma Logo" className="w-7 h-7" />
+    <header className="sticky top-0 z-50 bg-blue-600 shadow-lg">
+      <div className="container mx-auto px-4 py-3">
+        <div className="flex items-center justify-between gap-4">
+          {/* Logo */}
+          <div
+            onClick={onResetBrand}
+            className="flex items-center cursor-pointer group select-none"
+          >
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mr-2 shadow-sm group-hover:rotate-12 transition-transform">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-blue-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+            <span className="text-white font-bold text-xl tracking-tight hidden sm:block">
+              MobileStore
+            </span>
           </div>
-          <span className={`font-black text-2xl tracking-tight text-slate-900`}>Sigma</span>
-        </div>
-        
-        <div className="hidden md:flex items-center space-x-10">
-          <a href="#features" className="text-slate-600 hover:text-rose-600 font-bold transition text-sm uppercase tracking-wider">Tính năng</a>
-          <a href="#" className="text-slate-600 hover:text-rose-600 font-bold transition text-sm uppercase tracking-wider">Hệ sinh thái</a>
-          <a href="#" className="text-slate-600 hover:text-rose-600 font-bold transition text-sm uppercase tracking-wider">Cộng đồng</a>
-          <button className="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-rose-600 transition shadow-md hover:shadow-rose-200">
-            Dùng thử ngay
-          </button>
-        </div>
 
-        <button className="md:hidden text-slate-900">
-          <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-        </button>
+          {/* Search Bar */}
+          <div className="flex-1 max-w-xl relative">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Tìm kiếm điện thoại, phụ kiện..."
+              className="w-full py-2.5 pl-4 pr-10 rounded-lg border-none focus:ring-2 focus:ring-yellow-400 outline-none text-sm transition-shadow shadow-sm"
+            />
+            <button className="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-600 bg-yellow-400 p-1.5 rounded-md hover:bg-yellow-300 transition-colors">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+            </button>
+          </div>
+
+          {/* Icons Actions */}
+          <div className="flex items-center space-x-4 text-white">
+            <div className="hidden md:flex flex-col items-center cursor-pointer hover:text-yellow-300 transition-colors">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+              <span className="text-xs mt-1">Tài khoản</span>
+            </div>
+            <div className="flex flex-col items-center cursor-pointer hover:text-yellow-300 transition-colors relative">
+              <div className="relative">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
+                </svg>
+                <span className="absolute -top-2 -right-2 bg-yellow-400 text-blue-800 text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                  3
+                </span>
+              </div>
+              <span className="text-xs mt-1 hidden sm:block">Giỏ hàng</span>
+            </div>
+          </div>
+        </div>
       </div>
-    </nav>
+    </header>
   );
 };
 

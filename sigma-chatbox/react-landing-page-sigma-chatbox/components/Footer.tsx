@@ -1,71 +1,106 @@
-
-import React from 'react';
+import React from "react";
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-slate-50 border-t border-slate-100 pt-24 pb-12">
-      <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
-          <div className="lg:col-span-1">
-            <div className="flex items-center space-x-2 mb-8">
-              <div className="w-10 h-10 bg-gradient-to-tr from-rose-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
-                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Sigma&backgroundColor=transparent" alt="Sigma Logo" className="w-7 h-7" />
+    <footer className="bg-slate-900 text-white pt-10 pb-6 mt-10">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          {/* Col 1 */}
+          <div>
+            <h5 className="text-lg font-bold mb-4 flex items-center">
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+                  />
+                </svg>
               </div>
-              <span className="font-black text-2xl text-slate-900">Sigma</span>
-            </div>
-            <p className="text-slate-500 font-medium mb-10 leading-relaxed">
-              Dẫn đầu công nghệ AI Chat Box cho thương mại điện tử tại Đông Nam Á. 
-              Sứ mệnh của chúng tôi là biến mọi cuộc trò chuyện thành một đơn hàng.
+              MobileStore
+            </h5>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Hệ thống bán lẻ điện thoại di động chính hãng uy tín hàng đầu. Cam
+              kết chất lượng, giá cả cạnh tranh.
             </p>
-            <div className="flex space-x-4">
-              {['FB', 'TW', 'IN', 'GH'].map((social) => (
-                <a key={social} href="#" className="w-12 h-12 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 font-bold hover:bg-rose-600 hover:text-white transition-all shadow-sm">
-                  {social}
+          </div>
+
+          {/* Col 2 */}
+          <div>
+            <h5 className="font-bold mb-4 text-gray-200">Về chúng tôi</h5>
+            <ul className="space-y-2 text-sm text-gray-400">
+              <li>
+                <a href="#" className="hover:text-blue-400 transition-colors">
+                  Giới thiệu
                 </a>
-              ))}
-            </div>
-          </div>
-          
-          <div>
-            <h4 className="font-black text-slate-900 mb-8 uppercase tracking-widest text-sm">Sản phẩm</h4>
-            <ul className="space-y-4 text-slate-500 font-medium">
-              <li><a href="#" className="hover:text-rose-600 transition">Sigma Core AI</a></li>
-              <li><a href="#" className="hover:text-rose-600 transition">Sigma Widget SDK</a></li>
-              <li><a href="#" className="hover:text-rose-600 transition">Sigma Analytics</a></li>
-              <li><a href="#" className="hover:text-rose-600 transition">App Marketplace</a></li>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-400 transition-colors">
+                  Tuyển dụng
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-400 transition-colors">
+                  Chính sách bảo mật
+                </a>
+              </li>
             </ul>
           </div>
 
+          {/* Col 3 */}
           <div>
-            <h4 className="font-black text-slate-900 mb-8 uppercase tracking-widest text-sm">Hỗ trợ</h4>
-            <ul className="space-y-4 text-slate-500 font-medium">
-              <li><a href="#" className="hover:text-rose-600 transition">Trung tâm trợ giúp</a></li>
-              <li><a href="#" className="hover:text-rose-600 transition">Cộng đồng Dev</a></li>
-              <li><a href="#" className="hover:text-rose-600 transition">Trạng thái hệ thống</a></li>
-              <li><a href="#" className="hover:text-rose-600 transition">Liên hệ Support</a></li>
+            <h5 className="font-bold mb-4 text-gray-200">Hỗ trợ khách hàng</h5>
+            <ul className="space-y-2 text-sm text-gray-400">
+              <li>
+                <a href="#" className="hover:text-blue-400 transition-colors">
+                  Tra cứu đơn hàng
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-400 transition-colors">
+                  Chính sách bảo hành
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-blue-400 transition-colors">
+                  Hỏi đáp mua hàng
+                </a>
+              </li>
             </ul>
           </div>
 
+          {/* Col 4 */}
           <div>
-            <h4 className="font-black text-slate-900 mb-8 uppercase tracking-widest text-sm">Liên hệ</h4>
-            <div className="space-y-4 text-slate-500 font-medium">
-              <p>📍 Tầng 12, Tòa nhà Sigma, Quận 1, TP. HCM</p>
-              <p>📞 1900 8888 (Hotline 24/7)</p>
-              <p>✉️ hello@sigmaai.com</p>
+            <h5 className="font-bold mb-4 text-gray-200">Liên hệ</h5>
+            <p className="text-gray-400 text-sm mb-2">Hotline: 1800.0000</p>
+            <p className="text-gray-400 text-sm mb-4">
+              Email: cskh@mobilestore.com
+            </p>
+            <div className="flex space-x-3">
+              <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors cursor-pointer">
+                <span className="font-bold text-xs">F</span>
+              </div>
+              <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center hover:bg-red-500 transition-colors cursor-pointer">
+                <span className="font-bold text-xs">Y</span>
+              </div>
+              <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center hover:bg-pink-500 transition-colors cursor-pointer">
+                <span className="font-bold text-xs">I</span>
+              </div>
             </div>
           </div>
         </div>
-        
-        <div className="pt-10 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center text-slate-400 text-sm font-medium">
-          <p>© 2024 Sigma Labs. Made with ❤️ in Vietnam.</p>
-          <div className="mt-6 md:mt-0 flex items-center space-x-8">
-            <a href="#" className="hover:text-rose-600 transition">Bảo mật</a>
-            <a href="#" className="hover:text-rose-600 transition">Điều khoản</a>
-            <div className="flex items-center gap-2 px-3 py-1 bg-green-50 text-green-600 rounded-full font-bold text-[10px] uppercase">
-              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-              All Systems Operational
-            </div>
-          </div>
+
+        <div className="border-t border-gray-800 pt-6 text-center">
+          <p className="text-gray-500 text-xs">
+            © 2024 MobileStore. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
