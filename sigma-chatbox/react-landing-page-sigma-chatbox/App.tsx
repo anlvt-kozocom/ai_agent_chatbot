@@ -163,9 +163,26 @@ const App: React.FC = () => {
   const config = {
     primaryColor: "#6366f1",
     botName: "Sigma Assistant",
-    welcomeMessage: "Chào bạn! Tôi có thể giúp gì cho bạn?",
-    quickReplies: ["Giá iPhone 15", "Chính sách bảo hành"],
-    placeholder: "Nhập tin nhắn...",
+    welcomeMessage: {
+      vi: "Chào bạn! Tôi có thể giúp gì cho bạn?",
+      en: "Hello! How can I help you today?",
+      ja: "こんにちは！今日はどのようなお手伝いができますか？",
+    },
+    placeholder: {
+      vi: "Nhập tin nhắn...",
+      en: "Type a message...",
+      ja: "メッセージを入力してください...",
+    },
+    quickReplies: {
+      vi: ["Giá iPhone 15", "Bảo hành"],
+      en: ["iPhone 15 Price", "Warranty"],
+      ja: ["iPhone 15の価格", "保証"],
+    },
+    description: {
+      vi: '**Sigma Assistant** hỗ trợ bạn mọi lúc mọi nơi',
+      en: '**Sigma Assistant** supports you anytime, anywhere',
+      ja: '**Sigma Assistant** はいつでもどこでもあなたをサポートします',
+    },
     avatarUrl: "https://api.dicebear.com/7.x/bottts/svg?seed=Sigma",
     renderMarkdown: true,
   };
