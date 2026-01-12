@@ -11,6 +11,7 @@ async def recommendation_node(state: AgentState, config: RunnableConfig) -> dict
     """
     Agent Node: Provides product recommendations based on gathered requirements.
     """
+    print("--- Entering Recommendation Node ---")
     requirements = state.get("requirements", {})
 
     # 1. Construct search query from requirements (Already extracted in English/Unified format)

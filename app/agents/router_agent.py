@@ -52,6 +52,7 @@ async def router_node(state: AgentState, config: RunnableConfig) -> dict:
     """
     from app.services.memory_service import update_working_memory
 
+    print("--- Entering Router Node ---")
     messages = state.get("messages", [])
     if not messages:
         return {"route": "GENERAL"}
@@ -328,6 +329,7 @@ async def general_node(state: AgentState, config: RunnableConfig) -> dict:
     from app.utils.config import MAX_HISTORY_WINDOW
     from langchain_core.messages import AIMessage
 
+    print("--- Entering General Node ---")
     messages = state.get("messages", [])
     query = state.get("standalone_query")
     if not query:

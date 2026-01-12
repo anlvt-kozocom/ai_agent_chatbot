@@ -10,6 +10,7 @@ async def precision_node(state: AgentState, config: RunnableConfig) -> dict:
     - Applies Reranking, Filtering, Deduplication.
     - Stores final precision docs in state.
     """
+    print("--- Entering Precision Node ---")
     recall_docs = state.get("recall_docs", [])
     retrieval_strategy = state.get("retrieval_strategy", {})
 

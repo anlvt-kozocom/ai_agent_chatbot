@@ -4,21 +4,26 @@ import CategoryBar from "./components/CategoryBar";
 import BannerCarousel from "./components/BannerCarousel";
 import ProductList from "./components/ProductList";
 import Footer from "./components/Footer";
+import ProductModal from "./components/ProductModal";
 import { Chatbox } from "react-sigma-chatbox";
 import "react-sigma-chatbox/dist/react-sigma-chatbox.css";
 import { geminiService } from "./services/geminiService";
 import { BrandCategory, Banner, Product } from "./types";
+import { productList } from "@/constants/productList";
 
 const App: React.FC = () => {
   // State
   const [activeBrand, setActiveBrand] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const itemsPerPage = 20;
 
   // Data mocks from Sample.tsx
   const [brands] = useState<BrandCategory[]>([
     { id: "apple", name: "Apple", logo: "" },
     { id: "samsung", name: "Samsung", logo: "" },
-    { id: "xiaomi", name: "Xiaomi", logo: "" },
+    { id: "sony", name: "sony", logo: "" },
     { id: "oppo", name: "OPPO", logo: "" },
     { id: "vivo", name: "Vivo", logo: "" },
     { id: "realme", name: "Realme", logo: "" },
@@ -30,14 +35,14 @@ const App: React.FC = () => {
     {
       id: 1,
       image:
-        "https://images.unsplash.com/photo-1556656793-02715d8dd660?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+        "https://happyphone.vn/wp-content/uploads/2024/01/iPhone-15-Pro-Max2222-1024x576.webp",
       title: "iPhone 15 Pro Max",
       subtitle: "Thiết kế Titan. Hiệu năng vượt trội.",
     },
     {
       id: 2,
       image:
-        "https://images.unsplash.com/photo-1610945265078-386f3b58d86f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+        "https://snapcraze.co.za/wp-content/uploads/2024/01/s24-series-banner-1.jpeg",
       title: "Samsung Galaxy S24 Ultra",
       subtitle: "Quyền năng AI trong tay bạn.",
     },
@@ -50,115 +55,7 @@ const App: React.FC = () => {
     },
   ]);
 
-  const [products] = useState<Product[]>([
-    {
-      id: 1,
-      name: "iPhone 15 Pro Max 256GB",
-      brand: "Apple",
-      brandId: "apple",
-      price: 28990000,
-      originalPrice: 34990000,
-      image:
-        "https://images.unsplash.com/photo-1695046058804-1913c12140dd?w=500&auto=format&fit=crop&q=60",
-      rating: 5,
-      reviews: 128,
-      discount: 17,
-      isHot: true,
-    },
-    {
-      id: 2,
-      name: "Samsung Galaxy S24 Ultra 5G",
-      brand: "Samsung",
-      brandId: "samsung",
-      price: 29990000,
-      originalPrice: 33990000,
-      image:
-        "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=500&auto=format&fit=crop&q=60",
-      rating: 4.8,
-      reviews: 85,
-      discount: 12,
-      isHot: true,
-    },
-    {
-      id: 3,
-      name: "Xiaomi 14 5G 12GB/256GB",
-      brand: "Xiaomi",
-      brandId: "xiaomi",
-      price: 19990000,
-      originalPrice: 22990000,
-      image:
-        "https://images.unsplash.com/photo-1598327105666-5b89351aff70?w=500&auto=format&fit=crop&q=60",
-      rating: 4.5,
-      reviews: 42,
-      discount: 13,
-    },
-    {
-      id: 4,
-      name: "OPPO Reno10 Pro+ 5G",
-      brand: "OPPO",
-      brandId: "oppo",
-      price: 13990000,
-      originalPrice: 15490000,
-      image:
-        "https://images.unsplash.com/photo-1592899677712-a170135c7993?w=500&auto=format&fit=crop&q=60",
-      rating: 4.6,
-      reviews: 30,
-      discount: 10,
-    },
-    {
-      id: 5,
-      name: "iPhone 13 128GB VN/A",
-      brand: "Apple",
-      brandId: "apple",
-      price: 13990000,
-      originalPrice: 16990000,
-      image:
-        "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=500&auto=format&fit=crop&q=60",
-      rating: 4.9,
-      reviews: 1240,
-      discount: 18,
-    },
-    {
-      id: 6,
-      name: "Samsung Galaxy A55 5G",
-      brand: "Samsung",
-      brandId: "samsung",
-      price: 9690000,
-      originalPrice: 10690000,
-      image:
-        "https://images.unsplash.com/photo-1533228122081-3853f86e6ba5?w=500&auto=format&fit=crop&q=60",
-      rating: 4.2,
-      reviews: 15,
-      discount: 9,
-    },
-    {
-      id: 7,
-      name: "Realme 11 Pro+ 5G",
-      brand: "Realme",
-      brandId: "realme",
-      price: 8990000,
-      originalPrice: 9990000,
-      image:
-        "https://images.unsplash.com/photo-1589492477829-5e65395b66cc?w=500&auto=format&fit=crop&q=60",
-      rating: 4.0,
-      reviews: 12,
-      discount: 10,
-    },
-    {
-      id: 8,
-      name: "Xiaomi Redmi Note 13",
-      brand: "Xiaomi",
-      brandId: "xiaomi",
-      price: 4590000,
-      originalPrice: 5290000,
-      image:
-        "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&auto=format&fit=crop&q=60",
-      rating: 4.7,
-      reviews: 320,
-      discount: 13,
-      isHot: true,
-    },
-  ]);
+  const [products] = useState<Product[]>(productList);
 
   const config = {
     primaryColor: "#6366f1",
@@ -179,11 +76,11 @@ const App: React.FC = () => {
       ja: ["iPhone 15の価格", "保証"],
     },
     description: {
-      vi: '**Sigma Assistant** hỗ trợ bạn mọi lúc mọi nơi',
-      en: '**Sigma Assistant** supports you anytime, anywhere',
-      ja: '**Sigma Assistant** はいつでもどこでもあなたをサポートします',
+      vi: "**Sigma Assistant** hỗ trợ bạn mọi lúc mọi nơi",
+      en: "**Sigma Assistant** supports you anytime, anywhere",
+      ja: "**Sigma Assistant** はいつでもどこでもあなたをサポートします",
     },
-    avatarUrl: "https://api.dicebear.com/7.x/bottts/svg?seed=Sigma",
+    avatarUrl: "./public/images/sigma.png",
     renderMarkdown: true,
   };
 
@@ -213,6 +110,34 @@ const App: React.FC = () => {
     });
   }, [products, activeBrand, searchQuery]);
 
+  // Pagination Logic
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [activeBrand, searchQuery]);
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Optional: scroll to product list
+    const productListSection = document.getElementById("product-list");
+    if (productListSection) {
+      productListSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleProductClick = (product: Product) => {
+    setSelectedProduct(product);
+  };
+
+  const closeProductModal = () => {
+    setSelectedProduct(null);
+  };
+
   return (
     <>
       <div className="font-sans text-gray-800 bg-gray-50 min-h-screen flex flex-col">
@@ -234,15 +159,22 @@ const App: React.FC = () => {
           {activeBrand === "all" && <BannerCarousel banners={banners} />}
 
           {/* PRODUCT CATEGORIES / LIST */}
-          <ProductList
-            products={filteredProducts}
-            activeBrand={activeBrand}
-            getBrandName={getBrandName}
-            onResetBrand={handleResetBrand}
-          />
+          <div id="product-list">
+            <ProductList
+              products={paginatedProducts}
+              activeBrand={activeBrand}
+              getBrandName={getBrandName}
+              onResetBrand={handleResetBrand}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              onProductClick={handleProductClick}
+            />
+          </div>
         </main>
 
         <Footer />
+        <ProductModal product={selectedProduct} onClose={closeProductModal} />
       </div>
       <Chatbox config={config} onGetAiResponse={handleAiResponse} />
     </>

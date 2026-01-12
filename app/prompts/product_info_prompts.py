@@ -19,6 +19,8 @@ RESPONSE REQUIREMENTS:
    - Concise, succinct, get straight to the point.
    - No verbose greetings, no rambling.
 
-4. LANGUAGE:
+4. LANGUAGE & CURRENCY:
    - Respond in the requested language: {language}.
+   - If language is Vietnamese ('vi'), MUST output price in VND (approx. 25,000 VND = 1 USD).
+   - If language is English ('en'), MUST output price in USD.
 """

@@ -81,6 +81,7 @@ async def retrieval_strategy_node(state: AgentState, config: RunnableConfig) -> 
     """
     Node that determines the retrieval strategy.
     """
+    print("--- Entering Retrieval Strategy Node ---")
     strategy_decision = define_retrieval_strategy(state)
 
     print(

@@ -12,6 +12,7 @@ async def product_info_node(state: AgentState, config: RunnableConfig) -> dict:
     Agent Node: Provides detailed product information (RAG).
     Uses query and language from state.
     """
+    print("--- Entering Product Info Node ---")
     messages = state.get("messages", [])
     if not messages:
         return {"answer": "No question found."}

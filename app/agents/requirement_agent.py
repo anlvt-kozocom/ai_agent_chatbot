@@ -11,6 +11,7 @@ async def requirement_node(state: AgentState, config: RunnableConfig) -> dict:
     Agent Node: Asks questions to gather more requirements.
     Uses English prompts.
     """
+    print("--- Entering Requirement Node ---")
     messages = state.get("messages", [])
     requirements = state.get("requirements", {})
 

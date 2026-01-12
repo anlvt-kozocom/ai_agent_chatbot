@@ -9,6 +9,7 @@ export interface Product {
   rating: number;
   reviews: number;
   discount: number;
+  description?: string;
   isHot?: boolean;
 }
 
@@ -23,4 +24,10 @@ export interface Banner {
   image: string;
   title: string;
   subtitle: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
 }

@@ -2,6 +2,7 @@ import json
 from typing import List, Dict, Any, Optional
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import RunnableConfig
 from app.models.schemas import AgentState, WorkingMemory, SummaryMemory
 from app.services.llm import get_llm
 
@@ -70,7 +71,9 @@ async def update_working_memory(
     return current_wm
 
 
-async def summarize_conversation(state: AgentState) -> SummaryMemory:
+async def summarize_conversation(
+    state: AgentState, config: RunnableConfig = None
+) -> SummaryMemory:
     """
     Compresses the conversation history into a structured summary.
     This should be called periodically (e.g. every 5 turns).
@@ -106,7 +109,7 @@ async def summarize_conversation(state: AgentState) -> SummaryMemory:
 
     try:
         chain = prompt | llm.with_structured_output(SummaryMemory)
-        summary = await chain.ainvoke({"history": history_str})
+        summary = await chain.ainvoke({"history": history_str}, config=config)
         return summary
     except Exception as e:
         print(f"Summarization failed: {e}")

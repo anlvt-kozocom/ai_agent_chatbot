@@ -16,7 +16,6 @@ const Navbar: React.FC<NavbarProps> = ({
     <header className="sticky top-0 z-50 bg-blue-600 shadow-lg">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between gap-4">
-          {/* Logo */}
           <div
             onClick={onResetBrand}
             className="flex items-center cursor-pointer group select-none"
@@ -37,12 +36,11 @@ const Navbar: React.FC<NavbarProps> = ({
                 />
               </svg>
             </div>
-            <span className="text-white font-bold text-xl tracking-tight hidden sm:block">
+            <span className="text-white font-bold text-xl tracking-tight sm:block">
               MobileStore
             </span>
           </div>
 
-          {/* Search Bar */}
           <div className="flex-1 max-w-xl relative">
             <input
               type="text"

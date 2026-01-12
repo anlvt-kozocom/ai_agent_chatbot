@@ -43,15 +43,6 @@ const CategoryBar: React.FC<CategoryBarProps> = ({
                 />
               </svg>
             </div>
-            <span
-              className={`text-xs font-bold transition-colors duration-300 ${
-                activeBrand === "all"
-                  ? "text-blue-600"
-                  : "text-gray-500 group-hover:text-blue-600"
-              }`}
-            >
-              Tất cả
-            </span>
           </div>
 
           {/* Brands */}
@@ -62,7 +53,7 @@ const CategoryBar: React.FC<CategoryBarProps> = ({
               className="flex flex-col items-center min-w-[72px] cursor-pointer group transition-all duration-300"
             >
               <div
-                className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-2 shadow-sm border transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-1 ${
+                className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-2 shadow-sm border transition-all duration-300 group-hover:shadow-md group-hover:-translate-y-1 ${
                   activeBrand === brand.id
                     ? "bg-blue-600 border-blue-600 text-white shadow-blue-200 scale-105"
                     : "bg-white border-gray-200 text-gray-600 group-hover:border-blue-400 group-hover:text-blue-600"

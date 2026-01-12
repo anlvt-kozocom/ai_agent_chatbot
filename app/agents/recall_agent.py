@@ -11,6 +11,7 @@ async def recall_node(state: AgentState, config: RunnableConfig) -> dict:
     - Maximizes recall (high top_k).
     - Stores raw docs in state.
     """
+    print("--- Entering Recall Node ---")
     retrieval_strategy = state.get("retrieval_strategy")
     if not retrieval_strategy:
         # Should have been set by retrieval_strategy_node

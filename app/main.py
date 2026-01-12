@@ -49,6 +49,12 @@ def read_root():
     return {"message": "LangGraph QA Agent API is running"}
 
 
+@app.get("/health")
+def health_check():
+    """Health check endpoint to verify chatbot status."""
+    return {"status": "ok", "message": "Service is healthy"}
+
+
 @app.post("/chat")
 async def chat_endpoint(request: ChatRequest):
     """
@@ -114,23 +120,17 @@ async def chat_stream_endpoint(request: ChatRequest):
                     "language": request.language,
                 }
 
-                accumulated_answer = ""
-                path_set = set()  # Track unique nodes
-                final_path = []  # Maintain order if needed, or just list of visited nodes
-
                 # Astream events from the graph
                 async for event in graph.astream_events(
                     input_state, config=config, version="v1"
                 ):
                     kind = event["event"]
-                    node = event.get("metadata", {}).get("langgraph_node", "")
+                    # NEW: Filter out internal processes (like summarization)
+                    tags = event.get("tags", [])
+                    if "skip_stream" in tags:
+                        continue
 
-                    if node:
-                        path_set.add(node)
-                        # Only add to ordered path if it's new or we want to track every step
-                        # Matching /chat logic which takes result.get("path") - likely the nodes visited
-                        if not final_path or final_path[-1] != node:
-                            final_path.append(node)
+                    node = event.get("metadata", {}).get("langgraph_node", "")
 
                     # Filter Stream Events
                     if kind == "on_chat_model_stream":
@@ -139,45 +139,19 @@ async def chat_stream_endpoint(request: ChatRequest):
                         # To keep it simple, we stream everything from core nodes.
 
                         core_nodes = {
-                            "general_node",
-                            "product_info_node",
-                            "recommendation_node",
-                            "requirement_node",
                             "sales_synthesis_node",
-                            "comparison_node",  # Added comparison node just in case
                         }
 
                         if node in core_nodes:
                             content = event["data"]["chunk"].content
                             if content:
-                                accumulated_answer += content
                                 payload = {
-                                    "event": kind,
-                                    "node": node,
                                     "content": content,
                                 }
                                 yield f"data: {json.dumps(payload)}\n\n"
 
-                # Fetch final usage and state
-                token_usage = get_thread_usage(request.thread_id)
-
-                # Get history count from current state
-                current_state = await graph.aget_state(config)
-                history_count = len(current_state.values.get("messages", []))
-                final_answer = current_state.values.get("answer", "")
-
-                # Final metadata event
-                final_payload = {
-                    "event": "metadata",
-                    "thread_id": request.thread_id,
-                    "question": request.message,
-                    "language": request.language,
-                    "answer": final_answer,
-                    "path": final_path,
-                    "history_count": history_count,
-                    "token_usage": token_usage,
-                }
-                yield f"data: {json.dumps(final_payload)}\n\n"
+                # We DO NOT yield final metadata or usage here to keep it clean as requested.
+                # The graph execution itself updates the memory checkpointer.
 
                 yield "data: [DONE]\n\n"
             except Exception as e:
@@ -186,7 +160,7 @@ async def chat_stream_endpoint(request: ChatRequest):
 
                 traceback.print_exc()
                 # Optionally yield an error event so client knows
-                error_payload = {"event": "error", "error": str(e)}
+                error_payload = {"error": str(e)}
                 yield f"data: {json.dumps(error_payload)}\n\n"
 
         return StreamingResponse(event_generator(), media_type="text/event-stream")

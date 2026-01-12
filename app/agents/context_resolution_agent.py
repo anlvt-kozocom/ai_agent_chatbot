@@ -9,6 +9,7 @@ async def context_resolution_node(state: AgentState, config: RunnableConfig) -> 
     """
     Node to resolve the latest user query into a standalone query based on history.
     """
+    print("--- Entering Context Resolution Node ---")
     messages = state.get("messages", [])
     if not messages:
         return {"standalone_query": ""}

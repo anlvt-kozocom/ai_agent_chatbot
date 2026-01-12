@@ -11,6 +11,7 @@ async def comparison_node(state: AgentState, config: RunnableConfig) -> dict:
     Agent Node: Compares product information (RAG).
     Uses query and language from state.
     """
+    print("--- Entering Comparison Node ---")
     messages = state.get("messages", [])
     if not messages:
         return {"answer": "No question found."}

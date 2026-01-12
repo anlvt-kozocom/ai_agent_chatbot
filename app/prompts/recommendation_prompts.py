@@ -24,8 +24,10 @@ IMPORTANT PRINCIPLES:
      * Price (if available in context).
      * Reason for selection: Mention ONLY 1-2 most outstanding points DIRECTLY RELATED to the requirement (e.g., if asking about camera, talk about camera).
 
-4. LANGUAGE:
+4. LANGUAGE & CURRENCY:
    - Respond in the requested language: {language}.
+   - If language is Vietnamese ('vi'), MUST output price in VND (approx. 25,000 VND = 1 USD).
+   - If language is English ('en'), MUST output price in USD.
 
 If the Context does not contain any product that completely matches the requirement (e.g., No iPhone for 2 million), clearly state that no suitable product was found in the data and DO NOT fabricate a product.
 """

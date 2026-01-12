@@ -68,10 +68,8 @@ def format_device_to_text(brand: str, device: Dict[str, Any], lang: str = "en") 
     if "price_range" in device:
         text_parts.append(f"{labels['market_segment']}: {device['price_range']}")
 
-    if "price_vnd" in device:
-        text_parts.append(f"{labels['price']}: {device['price_vnd']}")
-    if "price_usd" in device:
-        text_parts.append(f"{labels['price_usd']}: {device['price_usd']}")
+    if "price" in device:
+        text_parts.append(f"{labels['price']}: {device['price']}")
 
     # Detailed Specifications
     if specs:
@@ -134,8 +132,8 @@ def load_text_files(directory: str) -> List[Document]:
                             specs = device.get("specifications", {})
 
                             # 1. Price
-                            price_vnd = device.get("price_vnd", "")
-                            price_val = clean_number(price_vnd)
+                            price_str = device.get("price", "")
+                            price_val = clean_number(price_str)
 
                             # 2. Specs (Battery, Memory)
                             # Note: Correct path is device -> specifications -> Battery/Memory
@@ -156,7 +154,7 @@ def load_text_files(directory: str) -> List[Document]:
                                 "model": device.get("model_name"),
                                 "language": lang,
                                 # Price info
-                                "price_vnd": price_vnd,
+                                "price_raw": price_str,
                                 "price_int": price_val,  # Use for range filter (e.g. price_int < 10000000)
                                 "price_range": device.get("price_range", "Unknown"),
                                 # Usage/Features
