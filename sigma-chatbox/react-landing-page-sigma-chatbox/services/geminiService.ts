@@ -82,7 +82,12 @@ export const geminiService = {
       }
     } catch (error) {
       console.error("Lỗi kết nối:", error);
-      yield "Đã có lỗi xảy ra khi kết nối với máy chủ.";
+      const errorMessages = {
+        vi: "Đã có lỗi xảy ra khi kết nối với máy chủ.",
+        en: "An error occurred while connecting to the server.",
+        ja: "サーバーへの接続中にエラーが発生しました。"
+      };
+      yield errorMessages[language as keyof typeof errorMessages] || errorMessages.en;
     }
   },
 };
