@@ -13,6 +13,7 @@ from langchain_core.callbacks import CallbackManagerForRetrieverRun
 
 from app.utils.text_processing import load_text_files, split_documents
 from app.services.query_expansion import QueryExpansionRetriever
+from app.services.llm import get_llm
 
 load_dotenv()
 
@@ -71,14 +72,9 @@ class RAGService:
         self.vector_store: Optional[FAISS] = None
         self.retriever: Optional[BaseRetriever] = None
 
-        # Initialize small LLM for reranking (cheap model)
-        # Using 4o-mini or gemini-flash logic based on env
-        if self.embedding_provider == "openai":
-            self.rerank_llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
-        else:
-            self.rerank_llm = ChatGoogleGenerativeAI(
-                model="gemini-1.5-flash", temperature=0
-            )
+        # Initialize LLM for reranking using the central factory
+        # This ensures we use the configured provider (OpenAI/Google) and model
+        self.rerank_llm = get_llm(temperature=0)
 
     def initialize(self, reload_data: bool = False):
         """
@@ -203,7 +199,12 @@ class RAGService:
             self.retriever = faiss_retriever
 
     async def recall(
-        self, strategy: str, query: str, top_k: int = 20, language: Optional[str] = None
+        self,
+        strategy: str,
+        query: str,
+        top_k: int = 20,
+        language: Optional[str] = None,
+        candidate_ids: Optional[List[str]] = None,
     ) -> List[Document]:
         """
         Recall Stage: Broadly retrieve potentially relevant documents.
@@ -214,25 +215,54 @@ class RAGService:
             return []
 
         search_kwargs = {"k": top_k}
+
+        # Build filter
+        metadata_filter = {}
         if language:
-            search_kwargs["filter"] = {"language": language}
+            metadata_filter["language"] = language
+
+        # If candidate_ids are provided, we must use them.
+        # FAISS in LangChain usually takes a dict for exact match.
+        # For a list of IDs, we might need to filter after retrieval if the DB is small,
+        # or use a more sophisticated filter if the vectorstore supports it.
+        # Here we retrieve slightly more and filter manually to ensure correctness across FAISS versions.
+
+        if candidate_ids:
+            # If we have a short list of candidates, we can increase top_k to ensure we find them
+            # but ideally the vector store would support ID filtering.
+            actual_top_k = min(
+                top_k * 5 + len(candidate_ids), 100
+            )  # Increased cap for safety
+            search_kwargs["k"] = actual_top_k
 
         docs = []
         if strategy == "NO_RAG":
             return []
 
-        elif strategy == "SQL_LOOKUP":
-            # Simulate SQL by strict vector search + filtering (if we had specific metadata)
-            # For recall, we still want to grab a few candidates
-            docs = await self.vector_store.asimilarity_search(query, **search_kwargs)
+        # Execute search
 
-        else:
-            # VECTOR_SEARCH, HYBRID, MULTI_PRODUCT
-            # For now, default to Vector Search as the base for Recall
-            # (Hybrid logic from existing code could be adapted here if strictly needed)
-            docs = await self.vector_store.asimilarity_search(query, **search_kwargs)
+        results = await self.vector_store.asimilarity_search(query, **search_kwargs)
 
-        return docs
+        # Post-filter by language and candidate_ids
+        filtered_docs = []
+        for doc in results:
+            # Language filter
+            if language and doc.metadata.get("language") != language:
+                continue
+
+            # ID filter
+            if candidate_ids:
+                doc_id = str(doc.metadata.get("product_id"))
+                if doc_id not in candidate_ids:
+                    continue
+                else:
+                    pass
+
+            filtered_docs.append(doc)
+            if len(filtered_docs) >= top_k:
+                break
+
+        return filtered_docs
 
     async def precision(
         self, docs: List[Document], strategy_config: Dict[str, Any], query: str = ""
@@ -246,16 +276,29 @@ class RAGService:
         if not docs:
             return []
 
-        # 1. Deduplicate (by content hash)
+        # 1. Deduplicate by product identity (not content similarity)
+        # Use product_id if available, otherwise brand+model combination
+        # This ensures different products are NOT incorrectly deduplicated
         unique_docs = {}
         for doc in docs:
-            # Simple dedup key: first 100 chars
-            key = doc.page_content[:100]
+            # Priority 1: Use product_id if available (most reliable)
+            product_id = doc.metadata.get("product_id")
+            if product_id:
+                key = f"id_{product_id}"
+            else:
+                # Priority 2: Use brand + model combination
+                brand = doc.metadata.get("brand", "")
+                model = doc.metadata.get("model", "")
+                if brand and model:
+                    key = f"{brand}_{model}"
+                else:
+                    # Fallback: Use content hash (for documents without metadata)
+                    key = doc.page_content[:100]
+
             if key not in unique_docs:
                 unique_docs[key] = {"doc": doc, "score": 0.0, "reason": ""}
 
         candidates = list(unique_docs.values())
-        print(f"DEBUG: Precision -> Deduplicated to {len(candidates)} candidates.")
 
         # 2. Rule-Based Scoring (Metadata)
         filters = strategy_config.get("filters", {})
@@ -273,18 +316,109 @@ class RAGService:
                 item["score"] += 5.0
                 item["reason"] += "[Brand Match] "
 
-            # Price Match (Heuristic)
-            target_price = filters.get("price")
-            if target_price:
-                if str(target_price) in doc.page_content:
+            # Price Match (Numeric & Range)
+            target_price_raw = filters.get("price")
+            product_price = metadata.get("price_int", 0)
+
+            if target_price_raw:
+                try:
+                    target_price_str = (
+                        str(target_price_raw).lower().replace(".", "").replace(",", "")
+                    )
+                    import re
+
+                    # Handle multipliers
+                    multiplier = 1
+                    if (
+                        "trieu" in target_price_str
+                        or "triệu" in target_price_str
+                        or "tr" in target_price_str
+                        or "m" in target_price_str
+                    ):
+                        # Check if "m" is not part of "ram" or "mah" (simple check: if it ends with m or space m)
+                        # Safer to just look for "triệu" or "tr" mostly, "m" can be ambiguous.
+                        # But let's support explicit 'm' for million if distinct.
+                        if "triệu" in target_price_str or "tr" in target_price_str:
+                            multiplier = 1000000
+                        elif (
+                            "m" in target_price_str
+                            and "mah" not in target_price_str
+                            and "ram" not in target_price_str
+                        ):
+                            multiplier = 1000000
+
+                    # Extract number
+                    num_match = re.search(r"(\d+)", target_price_str)
+                    price_num = int(num_match.group(1)) * multiplier if num_match else 0
+
+                    if (
+                        "under" in target_price_str
+                        or "<" in target_price_str
+                        or "duoi" in target_price_str
+                        or "dưới" in target_price_str
+                    ):
+                        if product_price > 0 and product_price <= price_num:
+                            item["score"] += 5.0
+                            item["reason"] += "[Price Under Limit] "
+                    elif (
+                        "over" in target_price_str
+                        or ">" in target_price_str
+                        or "tren" in target_price_str
+                        or "trên" in target_price_str
+                    ):
+                        if product_price > 0 and product_price >= price_num:
+                            item["score"] += 5.0
+                            item["reason"] += "[Price Over Limit] "
+                    else:
+                        # Approximate match (within 20%)
+                        if product_price > 0 and (
+                            price_num * 0.8 <= product_price <= price_num * 1.2
+                        ):
+                            item["score"] += 5.0
+                            item["reason"] += "[Price Match] "
+                except Exception as e:
+                    # Fallback to text match
+                    # print(f"Price Parse Error: {e}")
+                    if str(target_price_raw) in doc.page_content:
+                        item["score"] += 3.0
+                        item["reason"] += "[Price Text Match] "
+
+            # RAM Match
+            target_ram = filters.get("ram")
+            if target_ram:
+                # heuristic: extraction returns "8GB", metadata has numeric 8
+                import re
+
+                ram_match = re.search(r"(\d+)", str(target_ram))
+                if ram_match:
+                    target_ram_val = int(ram_match.group(1))
+                    product_ram = metadata.get("ram_gb", 0)
+                    if product_ram == target_ram_val:
+                        item["score"] += 4.0
+                        item["reason"] += "[RAM Match] "
+                elif str(target_ram).lower() in doc.page_content.lower():
                     item["score"] += 3.0
-                    item["reason"] += "[Price Mention] "
+                    item["reason"] += "[RAM Text Match] "
+
+            # Storage Match
+            target_storage = filters.get("storage")
+            if target_storage:
+                if str(target_storage).lower() in doc.page_content.lower():
+                    item["score"] += 4.0
+                    item["reason"] += "[Storage Match] "
+
+            # Color Match
+            target_color = filters.get("color")
+            if target_color:
+                # Loose text match for color
+                if str(target_color).lower() in doc.page_content.lower():
+                    item["score"] += 3.0
+                    item["reason"] += "[Color Match] "
 
         # 3. LLM Reranking
         rerank = strategy_config.get("rerank", False)
         # Trigger if rerank=True, even for 0 candidates (handled above), but max 20 to save cost
         if rerank and 0 < len(candidates) <= 20:
-            print("DEBUG: Precision -> Triggering LLM Reranking...")
             try:
                 # Prepare batch context
                 doc_texts = []
@@ -304,7 +438,6 @@ Documents:
 
                 response = await self.rerank_llm.ainvoke(prompt)
                 response_text = response.content
-                print(f"DEBUG: Rerank Output: {response_text[:100]}...")
 
                 import re
 
@@ -328,10 +461,6 @@ Documents:
 
         # 4. Selection
         candidates.sort(key=lambda x: x["score"], reverse=True)
-
-        # Debug Log
-        for i, c in enumerate(candidates[:3]):
-            print(f"DEBUG: Top {i + 1}: Score={c['score']}, Reason={c['reason']}")
 
         final_top_k = strategy_config.get("top_k", 4)
         top_candidates = [x["doc"] for x in candidates[:final_top_k]]

@@ -19,7 +19,6 @@ def get_llm(temperature: float = 0.7, model: str = None):
     if provider == "openai":
         # Check standard key first, then custom user key
         api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPEN_API_KEY")
-        print(f"Using OpenAI API key: {api_key}")
         if not api_key:
             print("Warning: OPENAI_API_KEY (or OPEN_API_KEY) is not set.")
 

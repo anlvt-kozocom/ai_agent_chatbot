@@ -11,7 +11,7 @@ def build_requirement_chain():
     - history: List[BaseMessage]
     - current_requirements: str (formatted list of requirements)
     """
-    llm = get_llm(temperature=0.7)
+    llm = get_llm(temperature=0.4)
 
     prompt = ChatPromptTemplate.from_messages(
         [

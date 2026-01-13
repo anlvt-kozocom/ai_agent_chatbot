@@ -1,26 +1,81 @@
-EXTRACTION_SYSTEM_PROMPT = """You are an information extraction expert. Your task is to read user messages and extract phone search requirements into JSON format.
+EXTRACTION_SYSTEM_PROMPT = """Extract phone search requirements from the user's message. Return JSON with only the fields that are explicitly mentioned.
 
-Information fields to extract:
-- price: Price level, budget. MUST NORMALIZE to standard format:
-  * "12 million VND" -> "12000000 VND"
-  * "1200 Yen" / "1200 JPY" -> "¥1200"
-  * "$500" -> "$500"
-  * "under 5 million VND" -> "under 5000000 VND"
-- usage: Usage needs. Map to these categories if possible:
-  * "Gaming" (for playing games, performance)
-  * "Photography" (for camera, photos, video)
-  * "Long-term Travel" (for battery, durability)
-  * "Media Consumption" (for movies, screen quality)
-  * "Multitasking" (for work, many apps)
-  * "General" (if unspecified or basic needs)
-- brand: Brand (e.g., "Samsung", "Sony"). MUST NORMALIZE aliases:
-  * "iPhone" -> "Apple"
-  * "Galaxy" -> "Samsung"
-- specs: Other specifications (e.g., "256GB", "5G", "120Hz").
-- num_products: The number of products the user wants to see (default to 3 if not specified).
+**Fields to extract:**
 
-If no information is found, return an empty JSON {{}}.
-Return ONLY JSON, no introductory text.
+- **brand**: Phone brand (Apple, Samsung, Sony, Oppo, Xiaomi, etc.)
+  * Normalize: "iPhone" → "Apple", "Galaxy" → "Samsung"
+  * CRITICAL: Only extract if EXPLICITLY mentioned. If no brand name appears, return null.
+  
+- **price**: Price or budget
+  * Vietnamese: "20 triệu" → "20000000 VND", "dưới 10tr" → "under 10000000 VND"
+  * Vietnamese: "20 triệu" → "20000000 VND", "dưới 10tr" → "under 10000000 VND"
+  * Keep currency: "$500" → "$500"
+
+- **price_sort**: Sort order by price
+  * "đắt nhất"/"most expensive" → "desc"
+  * "rẻ nhất"/"cheapest" → "asc"
+  
+- **usage**: List of usage needs
+  * "chơi game"/"gaming" → ["Gaming"]
+  * "chụp ảnh"/"camera" → ["Photography"]
+  * "pin trâu"/"battery" → ["Long-term Travel"]
+  * Multiple: "game và ảnh" → ["Gaming", "Photography"]
+  * CRITICAL: Only extract if EXPLICITLY mentioned. If no usage is mentioned, return null or empty list.
+  
+- **phone_type**: "Smartphone", "Tablet", or "Watch"
+
+- **ram**, **storage**, **color**, **specs**: If mentioned
+
+- **num_products**: Number requested (default 3)
+
+**Examples:**
+
+Query: "samsung"
+Output: {{"brand": "Samsung", "phone_type": "Smartphone"}}
+
+Query: "apple"
+Output: {{"brand": "Apple", "phone_type": "Smartphone"}}
+
+Query: "Tôi chọn Samsung"
+Output: {{"brand": "Samsung", "phone_type": "Smartphone"}}
+
+Query: "iPhone"
+Output: {{"brand": "Apple", "phone_type": "Smartphone"}}
+
+Query: "điện thoại giá 20 triệu"
+Output: {{"price": "20000000 VND", "phone_type": "Smartphone"}}
+
+Query: "tôi muốn mua điện thoại"
+Output: {{"phone_type": "Smartphone"}}
+
+Query: "điện thoại samsung"
+Output: {{"brand": "Samsung", "phone_type": "Smartphone"}}
+
+Query: "iphone giá 25 triệu"
+Output: {{"brand": "Apple", "price": "25000000 VND", "phone_type": "Smartphone"}}
+
+Query: "sony xperia để chơi game"
+Output: {{"brand": "Sony", "usage": ["Gaming"], "phone_type": "Smartphone"}}
+
+Query: "phone under $800 for photography"
+Output: {{"price": "under $800", "usage": ["Photography"], "phone_type": "Smartphone"}}
+
+Query: "điện thoại samsung rẻ nhất"
+Output: {{"brand": "Samsung", "price_sort": "asc", "phone_type": "Smartphone"}}
+
+Query: "máy nào đắt nhất của apple"
+Output: {{"brand": "Apple", "price_sort": "desc", "phone_type": "Smartphone"}}
+
+Query: "điện thoại nào đắt nhất"
+Output: {{"price_sort": "desc", "phone_type": "Smartphone"}}
+
+**CRITICAL RULES:**
+- Extract ONLY from the user's actual message
+- Do NOT invent, assume, or use default values
+- If a field is not explicitly mentioned, use null or omit it entirely
+- NEVER add brand if not mentioned - it MUST be null
+- NEVER add usage if not mentioned - it MUST be null or empty list
+- When in doubt, return null rather than guessing
 
 User message: {text}
 """

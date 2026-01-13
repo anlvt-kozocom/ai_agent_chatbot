@@ -36,19 +36,28 @@ ROUTING DESTINATIONS:
    - Queries with criteria (budget, usage, brand preference).
    - "Suggest a phone under 10 million", "I need a phone for gaming", "Best Samsung phone currently".
    - "Cheap phone", "Looking for new phone".
+   - **User mentions ONLY a brand name (e.g. "Apple", "Samsung", "Oppo") -> RECOMMENDATION.**
+   - **Multi-condition queries (price + brand, price + usage, brand + usage, etc.) -> RECOMMENDATION.**
+   - Examples of RECOMMENDATION:
+     * "Samsung phone around 20 million" (brand + price)
+     * "Phone for gaming under $500" (usage + price)
+     * "Samsung with good camera" (brand + usage)
+     * "điện thoại samsung giá 20 triệu để chơi game" (brand + price + usage)
 
 RULES:
 - OUTPUT MUST BE A JSON OBJECT matching the schema.
 - ABSOLUTELY NO RAG USAGE. Use only the user query and conversation context.
 - IF AMBIGUOUS, choose the most specific category.
 - "Requirements" like price, color, usage mostly map to RECOMMENDATION.
+- Distinguish: "iPhone" (Brand) -> RECOMMENDATION, "iPhone 15" (Specific Model) -> PRODUCT_INFO.
+- Multi-criteria queries always -> RECOMMENDATION.
 """
 
 
 async def router_node(state: AgentState, config: RunnableConfig) -> dict:
     """
     Router Node: Classifies intent using strict Decision Engine pattern.
-    Priority: Heuristic Rules > LLM Decision.
+    Priority: Frozen Intent > LLM Decision.
     """
     from app.services.memory_service import update_working_memory
 
@@ -70,23 +79,17 @@ async def router_node(state: AgentState, config: RunnableConfig) -> dict:
         and working_memory.get("intent_frozen")
         and working_memory.get("intent")
     ):
-        print(f"DEBUG: Intent frozen -> {working_memory['intent']}")
         final_route = working_memory["intent"]
         # Ensure route is valid for next steps
         current_requirements = (
             state.get("requirements", {}).copy() if state.get("requirements") else {}
         )
     else:
-        # 1. Heuristic Routing (Rule-based priority)
-        heuristic_decision = heuristic_route(query)
-        if heuristic_decision:
-            print(
-                f"DEBUG: Heuristic routing triggered -> {heuristic_decision['route']}"
-            )
-            final_decision = heuristic_decision
-        else:
-            # 2. LLM Decision (Fallback)
+        # 1. Routing via LLM
+        final_decision = None
+        if query:
             try:
+                # Use temperature=0 for consistent classification
                 llm = get_llm(temperature=0)
                 structured_llm = llm.with_structured_output(RouteDecision)
 
@@ -95,41 +98,121 @@ async def router_node(state: AgentState, config: RunnableConfig) -> dict:
                 )
 
                 chain = prompt | structured_llm
-                final_decision: RouteDecision = await chain.ainvoke(
-                    {"question": query}, config=config
-                )
-
-                # Fallback if structure fails (though with_structured_output should handle it)
-                if not final_decision or "route" not in final_decision:
-                    final_decision = {
-                        "route": "GENERAL",
-                        "confidence": 0.0,
-                        "reason": "Fallback parsing error",
-                    }
-
+                final_decision = await chain.ainvoke({"question": query}, config=config)
             except Exception as e:
                 print(f"Router LLM Error: {e}")
-                final_decision = {
-                    "route": "GENERAL",
-                    "confidence": 0.0,
-                    "reason": f"Error: {str(e)}",
-                }
+
+        # Fallback if something went wrong
+        if not final_decision or "route" not in final_decision:
+            final_decision = {
+                "route": "GENERAL",
+                "confidence": 0.0,
+                "reason": "Fallback: LLM routing failed",
+            }
 
         final_route = final_decision["route"]
 
-        # 3. Extract Requirements if needed (only for RECOMMENDATION or updated requirement)
+        # 2. Extract Requirements if needed (only for RECOMMENDATION or updated requirement)
         # We keep this side-effect to maintain state for recommendation_node
         current_requirements = (
             state.get("requirements", {}).copy() if state.get("requirements") else {}
         )
 
+        # ALWAYS run keyword fallback for brand detection (regardless of route)
+        # This ensures short responses like "samsung" are captured
+        query_lower = query.lower()
+        brand_keywords = {
+            "Apple": ["iphone", "apple", "táo khuyết"],
+            "Samsung": ["samsung", "galaxy"],
+            "Sony": ["sony", "xperia"],
+            "Oppo": ["oppo"],
+            "Xiaomi": ["xiaomi", "redmi", "poco"],
+            "Vivo": ["vivo"],
+            "Realme": ["realme"],
+            "OnePlus": ["oneplus"],
+            "Google": ["pixel", "google phone"],
+            "Huawei": ["huawei"],
+        }
+
+        # Check for brand keywords
+        detected_brand = None
+        for brand, keywords in brand_keywords.items():
+            if any(kw in query_lower for kw in keywords):
+                detected_brand = brand
+
+                break
+
+        # If brand detected, add to requirements immediately
+        if detected_brand:
+            current_requirements["brand"] = detected_brand
+
+        # Now run full extraction only for RECOMMENDATION route
         if final_route == "RECOMMENDATION":
             extract_chain = build_extraction_chain()
             try:
                 extracted = await extract_chain.ainvoke({"text": query}, config=config)
+
+                # If LLM extracted a brand and we didn't have one from keywords, use LLM's
+                if extracted.get("brand") and not detected_brand:
+                    current_requirements["brand"] = extracted["brand"]
+
+                # USAGE KEYWORD FALLBACK: Override usage if LLM extraction seems wrong
+                # Detect actual usage needs from query text
+                usage_keywords = {
+                    "Photography": [
+                        "chụp ảnh",
+                        "camera",
+                        "photo",
+                        "nhiếp ảnh",
+                        "quay phim",
+                        "selfie",
+                    ],
+                    "Gaming": ["chơi game", "gaming", "game", "hiệu năng cao", "chơi"],
+                    "Long-term Travel": [
+                        "pin trâu",
+                        "pin khỏe",
+                        "pin tốt",
+                        "battery",
+                        "dung lượng pin",
+                        "pin lâu",
+                    ],
+                    "Media Consumption": [
+                        "xem phim",
+                        "giải trí",
+                        "màn hình đẹp",
+                        "watching movies",
+                        "video",
+                    ],
+                    "Multitasking": [
+                        "làm việc",
+                        "đa nhiệm",
+                        "work",
+                        "multiple apps",
+                        "productivity",
+                    ],
+                }
+
+                detected_usages = []
+                for usage_type, keywords in usage_keywords.items():
+                    if any(kw in query_lower for kw in keywords):
+                        detected_usages.append(usage_type)
+
+                # Apply usage fallback
+                if detected_usages:
+                    # If we detected specific usages, use them instead of LLM output
+                    if extracted.get("usage") != detected_usages:
+                        extracted["usage"] = detected_usages
+                else:
+                    # If NO usage keywords detected, remove the usage field entirely
+                    # (avoid defaulting to Gaming)
+                    if "usage" in extracted:
+                        del extracted["usage"]
+
+                # Merge other extracted fields (price, etc.)
                 for k, v in extracted.items():
-                    if v:
+                    if v and k != "brand":  # Skip brand as we handled it above
                         current_requirements[k] = v
+
             except Exception as e:
                 print(f"Extraction failed: {e}")
 
@@ -137,32 +220,25 @@ async def router_node(state: AgentState, config: RunnableConfig) -> dict:
     # Prepare info to merge
     memory_update = {
         "intent": final_route,
-        "confidence": 1.0,  # Default high confidence if heuristic or frozen, else could be from LLM
+        "confidence": 1.0,  # Default high confidence if frozen, else could be from LLM
         "updates": {
             "budget_range": None,
             "preferred_brands": None,
             "usage_context": None,
-        },  # Placeholder for now, could be richer
+        },
     }
 
     # If we had LLM decision with confidence, use it (if not frozen)
     if (
         not (working_memory and working_memory.get("intent_frozen"))
         and "final_decision" in locals()
+        and final_decision
     ):
         memory_update["confidence"] = final_decision.get("confidence", 0.0)
 
     # Sync requirements to memory updates (simple mapping)
     if "current_requirements" in locals():
-        # Map flat requirements to detailed memory structure if possible
-        # For now, just persisting requirements in state is handled by the return,
-        # but let's try to populate memory constraints if we have them.
         updates = {}
-        if current_requirements.get("budget"):
-            # Parsing budget string to int range is complex, skipping for this iteration or leaving as raw string if schema allows
-            # Schema says budget_range is Dict[str, int], but extraction returns string maybe?
-            # Let's trust extraction chain returns standard format or just skip for now to avoid validation error
-            pass
         if current_requirements.get("brand"):
             # Brand is usually a string, schema expects List[str]
             updates["preferred_brands"] = (
@@ -170,6 +246,14 @@ async def router_node(state: AgentState, config: RunnableConfig) -> dict:
                 if isinstance(current_requirements["brand"], str)
                 else current_requirements["brand"]
             )
+
+        if current_requirements.get("usage"):
+            # Handle both string and list usage formats
+            usage_value = current_requirements["usage"]
+            if isinstance(usage_value, str):
+                updates["usage_context"] = [usage_value]
+            elif isinstance(usage_value, list):
+                updates["usage_context"] = usage_value
 
         memory_update["updates"] = updates
 
@@ -185,139 +269,6 @@ async def router_node(state: AgentState, config: RunnableConfig) -> dict:
         "path": new_path,
         "working_memory": updated_wm,
     }
-
-
-def heuristic_route(query: str) -> Optional[RouteDecision]:
-    """
-    Simple keyword-based routing to save LLM calls.
-    Returns RouteDecision or None.
-    """
-    if not query:
-        return None
-
-    query_lower = query.lower()
-
-    # Comparison Keywords (High Priority)
-    comp_keywords = [
-        "compare",
-        "comparison",
-        "vs",
-        "versus",
-        "difference",
-        "choose",
-        "better",
-        "or",
-        "so sánh",
-        "khác nhau",
-        "nên mua nào",
-        "nào tốt hơn",
-        "so kèo",
-        "giống nhau",
-        "phân biệt",
-        "đối chiếu",
-        "hay là",
-        "so với",
-        "nên chọn",
-        "比較",
-        "違い",
-        "どっち",
-        "どちら",
-        "選ぶ",
-        "くらべて",
-        "対決",
-    ]
-    if any(k in query_lower for k in comp_keywords):
-        return {
-            "route": "COMPARISON",
-            "confidence": 1.0,
-            "reason": "Keyword match: comparison",
-        }
-
-    # Recommendation Keywords
-    strong_rec_keywords = [
-        "recommend",
-        "suggest",
-        "looking for",
-        "budget",
-        "cheap",
-        "expensive",
-        "best",
-        "good",
-        "tư vấn",
-        "gợi ý",
-        "ngon",
-        "thích",
-        "おすすめ",
-        "探して",
-        "安い",
-        "ほしい",
-    ]
-    if any(k in query_lower for k in strong_rec_keywords):
-        return {
-            "route": "RECOMMENDATION",
-            "confidence": 1.0,
-            "reason": "Keyword match: recommendation",
-        }
-
-    # Product Info Keywords
-    # Note: Some overlap with 'best' (rec) or 'specs' (info), careful order
-    info_keywords = [
-        "spec",
-        "specification",
-        "ram",
-        "battery",
-        "storage",
-        "screen",
-        "display",
-        "camera",
-        "processor",
-        "cpu",
-        "weight",
-        "size",
-        "dimension",
-        "what is",
-        "tell me about",
-        "info",
-        "details",
-        "how much",
-        "price",
-        "cost",
-        "cấu hình",
-        "thông số",
-        "pin",
-        "bộ nhớ",
-        "màn hình",
-        "chip",
-        "nặng",
-        "kích thước",
-        "là gì",
-        "chi tiết",
-        "giá",
-        "bao nhiêu",
-        "tiền",
-        "スペック",
-        "仕様",
-        "バッテリー",
-        "メモリ",
-        "ストレージ",
-        "画面",
-        "プロセッサ",
-        "重さ",
-        "サイズ",
-        "とは",
-        "詳細",
-        "値段",
-        "価格",
-        "いくら",
-    ]
-    if any(k in query_lower for k in info_keywords):
-        return {
-            "route": "PRODUCT_INFO",
-            "confidence": 1.0,
-            "reason": "Keyword match: product_info",
-        }
-
-    return None
 
 
 async def general_node(state: AgentState, config: RunnableConfig) -> dict:

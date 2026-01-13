@@ -39,10 +39,6 @@ async def context_resolution_node(state: AgentState, config: RunnableConfig) -> 
         {"question": current_query, "history": history_str}, config=config
     )
 
-    print(
-        f"DEBUG: Context Resolution - Original: '{current_query}' -> Standalone: '{standalone_query}'"
-    )
-
     return {
         "standalone_query": standalone_query,
         "path": state.get("path", []) + ["context_resolution_node"],

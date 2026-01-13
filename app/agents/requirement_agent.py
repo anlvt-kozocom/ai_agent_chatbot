@@ -8,8 +8,8 @@ from langchain_core.messages import AIMessage
 
 async def requirement_node(state: AgentState, config: RunnableConfig) -> dict:
     """
-    Agent Node: Asks questions to gather more requirements.
-    Uses English prompts.
+    Agent Node: Asks for brand when missing.
+    User's response will be processed in the NEXT turn.
     """
     print("--- Entering Requirement Node ---")
     messages = state.get("messages", [])
@@ -35,18 +35,8 @@ async def requirement_node(state: AgentState, config: RunnableConfig) -> dict:
     current_path = state.get("path") or []
     new_path = current_path + ["requirement_node"]
 
-    # Do NOT overwrite 'answer' from recommendation_node
-    # Instead, we just append the question to the message history
-    # The final output to user will be: Recommendation + Follow-up Question
-
-    # We need to ensure the final answer combines both if they exist
-    previous_answer = state.get("answer", "")
-    final_answer = (
-        f"{previous_answer}\n\n{response_text}" if previous_answer else response_text
-    )
-
+    # Return only the brand question - user will answer in next turn
     return {
-        # "messages": [AIMessage(content=response_text)], <-- REMOVED
-        "answer": final_answer,
+        "answer": response_text,
         "path": new_path,
     }

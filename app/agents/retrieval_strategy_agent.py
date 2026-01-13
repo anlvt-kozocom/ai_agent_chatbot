@@ -26,34 +26,52 @@ def define_retrieval_strategy(state: AgentState) -> RetrievalStrategy:
 
     elif route == "COMPARISON":
         strategy = "MULTI_PRODUCT"
-        top_k = 6  # Need more docs for multiple products
+        top_k = 10  # Increased for better multi-product coverage after dedup
         rerank = True
         reason = "Comparison requires fetching info for multiple products."
 
     elif route == "RECOMMENDATION":
         strategy = "HYBRID"
-        top_k = 10  # Broad initial search
+
+        # Count how many conditions are specified
+        conditions_count = 0
+        if requirements.get("brand"):
+            conditions_count += 1
+        if requirements.get("price") or requirements.get("budget"):
+            conditions_count += 1
+        if requirements.get("usage"):
+            # Handle both string and list usage
+            usage = requirements.get("usage")
+            if isinstance(usage, list) and len(usage) > 0:
+                conditions_count += len(
+                    usage
+                )  # Multiple usage needs count as multiple conditions
+            elif isinstance(usage, str):
+                conditions_count += 1
+
+        # Adjust top_k based on complexity
+        if conditions_count >= 3:
+            # Multi-condition query: need more candidates for better filtering
+            top_k = 15
+        else:
+            top_k = 10  # Broad initial search
+
         rerank = True
         # Convert requirements to filters if possible
         # This is a placeholder for mapping requirements -> metadata filters
         if requirements:
             filters = requirements
-        reason = "Recommendation needs filtering + semantic search."
+        reason = f"Recommendation needs filtering + semantic search. ({conditions_count} conditions detected)"
 
     elif route == "PRODUCT_INFO":
         # Distinguish between SQL_LOOKUP (specific fields) and VECTOR_SEARCH (general info)
 
         # Heuristic for SQL/Structured data
         sql_keywords = [
-            "price",
-            "cost",
-            "how much",
             "stock",
             "color",
             "ram",
             "storage",
-            "giá",
-            "bao nhiêu",
             "màu",
             "dung lượng",
         ]

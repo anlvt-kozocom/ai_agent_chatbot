@@ -4,6 +4,7 @@ import json
 from typing import List, Dict, Any, Optional
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from app.tools.price_tool import price_tool
 
 
 I18N_LABELS = {
@@ -70,7 +71,7 @@ def format_device_to_text(brand: str, device: Dict[str, Any], lang: str = "en") 
 
     if "price" in device:
         text_parts.append(f"{labels['price']}: {device['price']}")
-
+    print(device["model_name"] + device["price"])
     # Detailed Specifications
     if specs:
         text_parts.append(f"\n{labels['tech_specs']}:")
@@ -167,6 +168,15 @@ def load_text_files(directory: str) -> List[Document]:
                                 "battery_info": bat_info,
                             }
 
+                            # Add product id from PriceTool for filtering support
+                            price_info = price_tool.get_price_by_name(
+                                device.get("model_name")
+                            )
+                            if price_info and "id" in price_info:
+                                metadata["product_id"] = str(price_info["id"])
+                            else:
+                                metadata["product_id"] = None
+
                             documents.append(
                                 Document(page_content=content, metadata=metadata)
                             )
@@ -195,5 +205,9 @@ def format_requirements(requirements: Dict[str, Any]) -> str:
 
     lines = []
     for key, value in requirements.items():
-        lines.append(f"- {key}: {value}")
+        # Special handling for list-based usage
+        if key == "usage" and isinstance(value, list):
+            lines.append(f"- {key}: {', '.join(value)}")
+        elif value:  # Only add non-empty values
+            lines.append(f"- {key}: {value}")
     return "\n".join(lines)

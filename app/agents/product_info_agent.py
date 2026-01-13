@@ -35,6 +35,8 @@ async def product_info_node(state: AgentState, config: RunnableConfig) -> dict:
     # USE PRECISION DOCS FROM STATE
     docs = state.get("precision_docs", [])
 
+    print(f"DEBUG: Product Info Node received {len(docs)} precision_docs")
+
     # Format context
     context = format_docs(docs) if docs else "No additional product information found."
 

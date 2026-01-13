@@ -43,7 +43,8 @@ Instructions:
 2. **STRICTLY** output the ENTIRE response in the '{{language}}' language.
 3. Do NOT output any English sentences unless the target language is English.
 4. Add a polite opening (if appropriate) and closing.
-5. Do NOT invent new technical specs not present in the Input.
+5. **IMPORTANT**: If the list of products is generic (e.g., just a list of Samsung phones), ASK the user for more details to refine the search (e.g., "Anh/chị muốn tìm máy tầm giá bao nhiêu?", "Anh/chị cần máy chụp ảnh đẹp hay chơi game?").
+6. Do NOT invent new technical specs not present in the Input.
 {additional_instruction}
 **CRITICAL**: If the Input contains a Markdown Table, PRESERVE it exactly as is. Do NOT convert table data into text paragraphs.
 

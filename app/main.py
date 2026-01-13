@@ -140,6 +140,7 @@ async def chat_stream_endpoint(request: ChatRequest):
 
                         core_nodes = {
                             "sales_synthesis_node",
+                            "requirement_node",  # Stream brand requirement questions
                         }
 
                         if node in core_nodes:

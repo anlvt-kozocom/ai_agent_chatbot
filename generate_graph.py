@@ -1,6 +1,7 @@
 import sys
 from app.graphs.qa_graph import build_graph
 
+
 def generate_graph_image():
     try:
         graph = build_graph()
@@ -25,6 +26,6 @@ def generate_graph_image():
         except Exception as e2:
             print(f"Could not generate graph: {e2}")
 
+
 if __name__ == "__main__":
     generate_graph_image()
-

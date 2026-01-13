@@ -15,5 +15,5 @@ def get_general_chat_chain():
     """
     Chain for general conversation.
     """
-    llm = get_llm(temperature=0.7)
+    llm = get_llm(temperature=0.5)
     return GENERAL_CHAT_PROMPT | llm | StrOutputParser()

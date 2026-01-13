@@ -25,13 +25,9 @@ async def precision_node(state: AgentState, config: RunnableConfig) -> dict:
         # Combine requirements for context if available
         pass
 
-    print(f"DEBUG: Precision Stage -> Input docs: {len(recall_docs)}")
-
     precision_docs = await rag_service.precision(
         docs=recall_docs, strategy_config=retrieval_strategy, query=query
     )
-
-    print(f"DEBUG: Precision Stage -> Output docs: {len(precision_docs)}")
 
     return {
         "precision_docs": precision_docs,

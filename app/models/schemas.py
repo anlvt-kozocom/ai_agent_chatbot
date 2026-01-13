@@ -3,13 +3,40 @@ from langgraph.graph.message import add_messages
 from langchain_core.messages import BaseMessage
 
 
+def merge_requirements(
+    left: Dict[str, Any] | None, right: Dict[str, Any] | None
+) -> Dict[str, Any]:
+    """
+    Merge requirements dictionaries, with right (new) values taking precedence.
+    This ensures requirements accumulate across conversation turns.
+    """
+
+    if left is None:
+        result = right if right is not None else {}
+
+        return result
+    if right is None:
+        return left
+
+    # Merge: right overwrites left
+    merged = left.copy()
+    merged.update(right)
+
+    return merged
+
+
 class RetrievalStrategy(TypedDict):
     """
     Structured object defining HOW retrieval should be performed.
     """
 
     strategy: Literal[
-        "NO_RAG", "SQL_LOOKUP", "VECTOR_SEARCH", "HYBRID", "MULTI_PRODUCT"
+        "NO_RAG",
+        "SQL_LOOKUP",
+        "VECTOR_SEARCH",
+        "HYBRID",
+        "MULTI_PRODUCT",
+        "PRICE_SEARCH",
     ]
     top_k: int
     rerank: bool
@@ -72,7 +99,8 @@ class AgentState(TypedDict):
         ]
         | None
     )
-    requirements: Dict[str, Any] | None
+    # IMPORTANT: Annotated with merge_requirements to persist across turns
+    requirements: Annotated[Dict[str, Any] | None, merge_requirements]
     next_step: str | None
 
     # New fields for language support
@@ -90,3 +118,4 @@ class AgentState(TypedDict):
     # RAG Pipeline State
     recall_docs: List[Any] | None  # Raw candidates from Recall Stage
     precision_docs: List[Any] | None  # Refined docs from Precision Stage
+    candidate_ids: List[str] | None  # Pre-retrieval filtered product IDs

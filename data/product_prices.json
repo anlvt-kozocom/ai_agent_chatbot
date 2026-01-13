@@ -1,0 +1,1626 @@
+[
+    {
+        "id": 1,
+        "branch": "Apple",
+        "model_name": "iPad Air 13 (2025)",
+        "price_vnd": "29294200",
+        "price_usd": "1121",
+        "price_yen": "137968"
+    },
+    {
+        "id": 2,
+        "branch": "Apple",
+        "model_name": "Watch Series 10 Aluminum",
+        "price_vnd": "10453404",
+        "price_usd": "400",
+        "price_yen": "49232"
+    },
+    {
+        "id": 3,
+        "branch": "Apple",
+        "model_name": "iPad Pro 11 (2024)",
+        "price_vnd": "37003200",
+        "price_usd": "1416",
+        "price_yen": "174276"
+    },
+    {
+        "id": 4,
+        "branch": "Apple",
+        "model_name": "Watch Series 9 Aluminum",
+        "price_vnd": "10484240",
+        "price_usd": "401",
+        "price_yen": "49378"
+    },
+    {
+        "id": 5,
+        "branch": "Apple",
+        "model_name": "Watch Ultra 2",
+        "price_vnd": "18809651",
+        "price_usd": "719",
+        "price_yen": "88588"
+    },
+    {
+        "id": 6,
+        "branch": "Apple",
+        "model_name": "iPhone 15",
+        "price_vnd": "16713112",
+        "price_usd": "639",
+        "price_yen": "78714"
+    },
+    {
+        "id": 7,
+        "branch": "Apple",
+        "model_name": "Watch SE (2022)",
+        "price_vnd": "5550171",
+        "price_usd": "212",
+        "price_yen": "26139"
+    },
+    {
+        "id": 8,
+        "branch": "Apple",
+        "model_name": "Watch Ultra",
+        "price_vnd": "16959800",
+        "price_usd": "649",
+        "price_yen": "79876"
+    },
+    {
+        "id": 9,
+        "branch": "Apple",
+        "model_name": "iPad Air (2022)",
+        "price_vnd": "16959800",
+        "price_usd": "649",
+        "price_yen": "79876"
+    },
+    {
+        "id": 10,
+        "branch": "Apple",
+        "model_name": "iPhone SE (2022)",
+        "price_vnd": "4471220",
+        "price_usd": "171",
+        "price_yen": "21058"
+    },
+    {
+        "id": 11,
+        "branch": "Apple",
+        "model_name": "iPad (2022)",
+        "price_vnd": "13259480",
+        "price_usd": "507",
+        "price_yen": "62448"
+    },
+    {
+        "id": 12,
+        "branch": "Apple",
+        "model_name": "iPhone 12 Pro",
+        "price_vnd": "10854272",
+        "price_usd": "415",
+        "price_yen": "51120"
+    },
+    {
+        "id": 13,
+        "branch": "Apple",
+        "model_name": "iPhone 13 mini",
+        "price_vnd": "9124064",
+        "price_usd": "349",
+        "price_yen": "42972"
+    },
+    {
+        "id": 14,
+        "branch": "Apple",
+        "model_name": "iPhone 14 Plus",
+        "price_vnd": "14368959",
+        "price_usd": "549",
+        "price_yen": "67674"
+    },
+    {
+        "id": 15,
+        "branch": "Apple",
+        "model_name": "Watch Series 8",
+        "price_vnd": "10175880",
+        "price_usd": "389",
+        "price_yen": "47925"
+    },
+    {
+        "id": 16,
+        "branch": "Apple",
+        "model_name": "iPhone 15 Pro Max",
+        "price_vnd": "25593880",
+        "price_usd": "979",
+        "price_yen": "120540"
+    },
+    {
+        "id": 17,
+        "branch": "Apple",
+        "model_name": "iPad mini (2024)",
+        "price_vnd": "18501600",
+        "price_usd": "708",
+        "price_yen": "87138"
+    },
+    {
+        "id": 18,
+        "branch": "Apple",
+        "model_name": "iPhone 16e",
+        "price_vnd": "17237324",
+        "price_usd": "659",
+        "price_yen": "81183"
+    },
+    {
+        "id": 19,
+        "branch": "Apple",
+        "model_name": "iPhone 16 Plus",
+        "price_vnd": "24535896",
+        "price_usd": "938",
+        "price_yen": "115558"
+    },
+    {
+        "id": 20,
+        "branch": "Apple",
+        "model_name": "iPhone 14",
+        "price_vnd": "11995204",
+        "price_usd": "459",
+        "price_yen": "56494"
+    },
+    {
+        "id": 21,
+        "branch": "Apple",
+        "model_name": "Watch Series 10",
+        "price_vnd": "24391276",
+        "price_usd": "933",
+        "price_yen": "114876"
+    },
+    {
+        "id": 22,
+        "branch": "Apple",
+        "model_name": "iPhone 12 Pro Max",
+        "price_vnd": "13073538",
+        "price_usd": "500",
+        "price_yen": "61573"
+    },
+    {
+        "id": 23,
+        "branch": "Apple",
+        "model_name": "Watch Series 7",
+        "price_vnd": "9559160",
+        "price_usd": "365",
+        "price_yen": "45021"
+    },
+    {
+        "id": 24,
+        "branch": "Apple",
+        "model_name": "iPhone 12",
+        "price_vnd": "7246460",
+        "price_usd": "277",
+        "price_yen": "34129"
+    },
+    {
+        "id": 25,
+        "branch": "Apple",
+        "model_name": "iPhone 16",
+        "price_vnd": "21078872",
+        "price_usd": "806",
+        "price_yen": "99276"
+    },
+    {
+        "id": 26,
+        "branch": "Apple",
+        "model_name": "iPhone 16 Pro",
+        "price_vnd": "27135680",
+        "price_usd": "1038",
+        "price_yen": "127802"
+    },
+    {
+        "id": 27,
+        "branch": "Apple",
+        "model_name": "iPhone 15 Pro",
+        "price_vnd": "22171084",
+        "price_usd": "848",
+        "price_yen": "104420"
+    },
+    {
+        "id": 28,
+        "branch": "Apple",
+        "model_name": "iPhone 15 Plus",
+        "price_vnd": "20503164",
+        "price_usd": "784",
+        "price_yen": "96564"
+    },
+    {
+        "id": 29,
+        "branch": "Apple",
+        "model_name": "iPad Pro 11 (2022)",
+        "price_vnd": "32377800",
+        "price_usd": "1239",
+        "price_yen": "152491"
+    },
+    {
+        "id": 30,
+        "branch": "Apple",
+        "model_name": "iPad Pro 11 (2021)",
+        "price_vnd": "26827320",
+        "price_usd": "1026",
+        "price_yen": "126350"
+    },
+    {
+        "id": 31,
+        "branch": "Apple",
+        "model_name": "Watch Series 7 Aluminum",
+        "price_vnd": "15418000",
+        "price_usd": "590",
+        "price_yen": "72615"
+    },
+    {
+        "id": 32,
+        "branch": "Apple",
+        "model_name": "iPhone 13",
+        "price_vnd": "10422568",
+        "price_usd": "398",
+        "price_yen": "49087"
+    },
+    {
+        "id": 33,
+        "branch": "Apple",
+        "model_name": "iPhone 13 Pro Max",
+        "price_vnd": "15078495",
+        "price_usd": "577",
+        "price_yen": "71016"
+    },
+    {
+        "id": 34,
+        "branch": "Apple",
+        "model_name": "iPad Pro 13 (2024)",
+        "price_vnd": "47795800",
+        "price_usd": "1829",
+        "price_yen": "225106"
+    },
+    {
+        "id": 35,
+        "branch": "Apple",
+        "model_name": "iPad Air 11 (2024)",
+        "price_vnd": "21585200",
+        "price_usd": "826",
+        "price_yen": "101661"
+    },
+    {
+        "id": 36,
+        "branch": "Apple",
+        "model_name": "Watch Series 9",
+        "price_vnd": "19426680",
+        "price_usd": "743",
+        "price_yen": "91494"
+    },
+    {
+        "id": 37,
+        "branch": "Apple",
+        "model_name": "iPad mini (2021)",
+        "price_vnd": "16959800",
+        "price_usd": "649",
+        "price_yen": "79876"
+    },
+    {
+        "id": 38,
+        "branch": "Apple",
+        "model_name": "iPhone 16 Pro Max",
+        "price_vnd": "33765111",
+        "price_usd": "1292",
+        "price_yen": "159025"
+    },
+    {
+        "id": 39,
+        "branch": "Apple",
+        "model_name": "iPhone 14 Pro",
+        "price_vnd": "16928964",
+        "price_usd": "647",
+        "price_yen": "79731"
+    },
+    {
+        "id": 40,
+        "branch": "Apple",
+        "model_name": "iPad Pro 12.9 (2022)",
+        "price_vnd": "44712200",
+        "price_usd": "1711",
+        "price_yen": "210583"
+    },
+    {
+        "id": 41,
+        "branch": "Apple",
+        "model_name": "iPad (2025)",
+        "price_vnd": "12334400",
+        "price_usd": "472",
+        "price_yen": "58091"
+    },
+    {
+        "id": 42,
+        "branch": "Apple",
+        "model_name": "iPhone 12 mini",
+        "price_vnd": "6166891",
+        "price_usd": "235",
+        "price_yen": "29044"
+    },
+    {
+        "id": 43,
+        "branch": "Apple",
+        "model_name": "iPad Air 11 (2025)",
+        "price_vnd": "21585200",
+        "price_usd": "826",
+        "price_yen": "101661"
+    },
+    {
+        "id": 44,
+        "branch": "Apple",
+        "model_name": "iPhone 13 Pro",
+        "price_vnd": "13814528",
+        "price_usd": "528",
+        "price_yen": "65063"
+    },
+    {
+        "id": 45,
+        "branch": "Apple",
+        "model_name": "Watch Series 8 Aluminum",
+        "price_vnd": "10484240",
+        "price_usd": "401",
+        "price_yen": "49378"
+    },
+    {
+        "id": 46,
+        "branch": "Apple",
+        "model_name": "iPad Pro 11 (2020)",
+        "price_vnd": "24668800",
+        "price_usd": "944",
+        "price_yen": "116183"
+    },
+    {
+        "id": 47,
+        "branch": "Apple",
+        "model_name": "iPad Air (2020)",
+        "price_vnd": "19735040",
+        "price_usd": "755",
+        "price_yen": "92947"
+    },
+    {
+        "id": 48,
+        "branch": "Apple",
+        "model_name": "Watch Series 6",
+        "price_vnd": "21893560",
+        "price_usd": "837",
+        "price_yen": "103113"
+    },
+    {
+        "id": 49,
+        "branch": "Apple",
+        "model_name": "Watch Series 6 Aluminum",
+        "price_vnd": "12951120",
+        "price_usd": "495",
+        "price_yen": "60996"
+    },
+    {
+        "id": 50,
+        "branch": "Apple",
+        "model_name": "Watch Edition Series 5",
+        "price_vnd": "26210600",
+        "price_usd": "1003",
+        "price_yen": "123445"
+    },
+    {
+        "id": 51,
+        "branch": "Apple",
+        "model_name": "iPhone 11 Pro",
+        "price_vnd": "7400640",
+        "price_usd": "283",
+        "price_yen": "34855"
+    },
+    {
+        "id": 52,
+        "branch": "Apple",
+        "model_name": "Watch Series 4",
+        "price_vnd": "21585200",
+        "price_usd": "826",
+        "price_yen": "101661"
+    },
+    {
+        "id": 53,
+        "branch": "Apple",
+        "model_name": "iPhone 11 Pro Max",
+        "price_vnd": "9106179",
+        "price_usd": "348",
+        "price_yen": "42887"
+    },
+    {
+        "id": 54,
+        "branch": "Apple",
+        "model_name": "iPad 10.2 (2020)",
+        "price_vnd": "11409320",
+        "price_usd": "436",
+        "price_yen": "53735"
+    },
+    {
+        "id": 55,
+        "branch": "Samsung",
+        "model_name": "Galaxy Z Flip7",
+        "price_vnd": "28687964",
+        "price_usd": "1097",
+        "price_yen": "135113"
+    },
+    {
+        "id": 56,
+        "branch": "Samsung",
+        "model_name": "Galaxy M36",
+        "price_vnd": "5101658",
+        "price_usd": "192",
+        "price_yen": "26598"
+    },
+    {
+        "id": 57,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab Active5 Pro",
+        "price_vnd": "27752400",
+        "price_usd": "1062",
+        "price_yen": "130706"
+    },
+    {
+        "id": 58,
+        "branch": "Samsung",
+        "model_name": "Galaxy A26",
+        "price_vnd": "5858840",
+        "price_usd": "224",
+        "price_yen": "27593"
+    },
+    {
+        "id": 59,
+        "branch": "Samsung",
+        "model_name": "Galaxy M06",
+        "price_vnd": "2769338",
+        "price_usd": "104",
+        "price_yen": "14438"
+    },
+    {
+        "id": 60,
+        "branch": "Samsung",
+        "model_name": "Galaxy A56",
+        "price_vnd": "9096620",
+        "price_usd": "348",
+        "price_yen": "42842"
+    },
+    {
+        "id": 61,
+        "branch": "Samsung",
+        "model_name": "Galaxy F16",
+        "price_vnd": "3495273",
+        "price_usd": "131",
+        "price_yen": "18223"
+    },
+    {
+        "id": 62,
+        "branch": "Samsung",
+        "model_name": "Galaxy S25 Ultra",
+        "price_vnd": "27721564",
+        "price_usd": "1060",
+        "price_yen": "130561"
+    },
+    {
+        "id": 63,
+        "branch": "Samsung",
+        "model_name": "Galaxy F36",
+        "price_vnd": "4955888",
+        "price_usd": "186",
+        "price_yen": "25838"
+    },
+    {
+        "id": 64,
+        "branch": "Samsung",
+        "model_name": "Galaxy S25",
+        "price_vnd": "18068045",
+        "price_usd": "691",
+        "price_yen": "85096"
+    },
+    {
+        "id": 65,
+        "branch": "Samsung",
+        "model_name": "Galaxy F56",
+        "price_vnd": "8325720",
+        "price_usd": "318",
+        "price_yen": "39212"
+    },
+    {
+        "id": 66,
+        "branch": "Samsung",
+        "model_name": "Galaxy Watch7",
+        "price_vnd": "5023184",
+        "price_usd": "192",
+        "price_yen": "23657"
+    },
+    {
+        "id": 67,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab S10 FE+",
+        "price_vnd": "15537976",
+        "price_usd": "589",
+        "price_yen": "76887"
+    },
+    {
+        "id": 68,
+        "branch": "Samsung",
+        "model_name": "Galaxy Watch FE",
+        "price_vnd": "4162551",
+        "price_usd": "159",
+        "price_yen": "19604"
+    },
+    {
+        "id": 69,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab S10 Ultra",
+        "price_vnd": "37003200",
+        "price_usd": "1416",
+        "price_yen": "174276"
+    },
+    {
+        "id": 70,
+        "branch": "Samsung",
+        "model_name": "Galaxy Z Flip6",
+        "price_vnd": "19377034",
+        "price_usd": "741",
+        "price_yen": "91261"
+    },
+    {
+        "id": 71,
+        "branch": "Samsung",
+        "model_name": "Galaxy M55",
+        "price_vnd": "8464482",
+        "price_usd": "323",
+        "price_yen": "39865"
+    },
+    {
+        "id": 72,
+        "branch": "Samsung",
+        "model_name": "Galaxy M35",
+        "price_vnd": "6136364",
+        "price_usd": "234",
+        "price_yen": "28900"
+    },
+    {
+        "id": 73,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab S6 Lite (2024)",
+        "price_vnd": "12334400",
+        "price_usd": "472",
+        "price_yen": "58091"
+    },
+    {
+        "id": 74,
+        "branch": "Samsung",
+        "model_name": "Galaxy M15",
+        "price_vnd": "4525799",
+        "price_usd": "173",
+        "price_yen": "21315"
+    },
+    {
+        "id": 75,
+        "branch": "Samsung",
+        "model_name": "Galaxy Watch Ultra",
+        "price_vnd": "10264996",
+        "price_usd": "392",
+        "price_yen": "48345"
+    },
+    {
+        "id": 76,
+        "branch": "Samsung",
+        "model_name": "Galaxy S25 Edge",
+        "price_vnd": "22762210",
+        "price_usd": "871",
+        "price_yen": "107204"
+    },
+    {
+        "id": 77,
+        "branch": "Samsung",
+        "model_name": "Galaxy XCover7 Pro",
+        "price_vnd": "16512369",
+        "price_usd": "631",
+        "price_yen": "77769"
+    },
+    {
+        "id": 78,
+        "branch": "Samsung",
+        "model_name": "Galaxy S25+",
+        "price_vnd": "23435051",
+        "price_usd": "896",
+        "price_yen": "110373"
+    },
+    {
+        "id": 79,
+        "branch": "Samsung",
+        "model_name": "Galaxy S24 FE",
+        "price_vnd": "12334091",
+        "price_usd": "471",
+        "price_yen": "58090"
+    },
+    {
+        "id": 80,
+        "branch": "Samsung",
+        "model_name": "Galaxy A16",
+        "price_vnd": "3551998",
+        "price_usd": "135",
+        "price_yen": "16729"
+    },
+    {
+        "id": 81,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab S10 FE",
+        "price_vnd": "17884880",
+        "price_usd": "684",
+        "price_yen": "84233"
+    },
+    {
+        "id": 82,
+        "branch": "Samsung",
+        "model_name": "Galaxy Z Fold7",
+        "price_vnd": "43711571",
+        "price_usd": "1672",
+        "price_yen": "205870"
+    },
+    {
+        "id": 83,
+        "branch": "Samsung",
+        "model_name": "Galaxy M56",
+        "price_vnd": "8162828",
+        "price_usd": "307",
+        "price_yen": "42558"
+    },
+    {
+        "id": 84,
+        "branch": "Samsung",
+        "model_name": "Galaxy F14 4G",
+        "price_vnd": "3083600",
+        "price_usd": "118",
+        "price_yen": "14522"
+    },
+    {
+        "id": 85,
+        "branch": "Samsung",
+        "model_name": "Galaxy F05",
+        "price_vnd": "1900840",
+        "price_usd": "71",
+        "price_yen": "9910"
+    },
+    {
+        "id": 86,
+        "branch": "Samsung",
+        "model_name": "Galaxy A35",
+        "price_vnd": "7308132",
+        "price_usd": "279",
+        "price_yen": "34419"
+    },
+    {
+        "id": 87,
+        "branch": "Samsung",
+        "model_name": "Galaxy A55",
+        "price_vnd": "10416092",
+        "price_usd": "398",
+        "price_yen": "49057"
+    },
+    {
+        "id": 88,
+        "branch": "Samsung",
+        "model_name": "Galaxy Z Fold6",
+        "price_vnd": "23976531",
+        "price_usd": "917",
+        "price_yen": "112923"
+    },
+    {
+        "id": 89,
+        "branch": "Samsung",
+        "model_name": "Galaxy Watch8 Classic",
+        "price_vnd": "15769838",
+        "price_usd": "603",
+        "price_yen": "74272"
+    },
+    {
+        "id": 90,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab S10+",
+        "price_vnd": "23843824",
+        "price_usd": "905",
+        "price_yen": "117987"
+    },
+    {
+        "id": 91,
+        "branch": "Samsung",
+        "model_name": "Galaxy F06 5G",
+        "price_vnd": "3031724",
+        "price_usd": "114",
+        "price_yen": "15806"
+    },
+    {
+        "id": 92,
+        "branch": "Samsung",
+        "model_name": "Galaxy A06",
+        "price_vnd": "2774931",
+        "price_usd": "106",
+        "price_yen": "13069"
+    },
+    {
+        "id": 93,
+        "branch": "Samsung",
+        "model_name": "Galaxy A16 5G",
+        "price_vnd": "4307480",
+        "price_usd": "164",
+        "price_yen": "20287"
+    },
+    {
+        "id": 94,
+        "branch": "Samsung",
+        "model_name": "Galaxy F55",
+        "price_vnd": "5166088",
+        "price_usd": "194",
+        "price_yen": "26934"
+    },
+    {
+        "id": 95,
+        "branch": "Samsung",
+        "model_name": "Galaxy M55s",
+        "price_vnd": "5171336",
+        "price_usd": "195",
+        "price_yen": "26961"
+    },
+    {
+        "id": 96,
+        "branch": "Samsung",
+        "model_name": "Galaxy M16",
+        "price_vnd": "3352418",
+        "price_usd": "126",
+        "price_yen": "17478"
+    },
+    {
+        "id": 97,
+        "branch": "Samsung",
+        "model_name": "Galaxy M05",
+        "price_vnd": "1894718",
+        "price_usd": "71",
+        "price_yen": "9878"
+    },
+    {
+        "id": 98,
+        "branch": "Samsung",
+        "model_name": "Galaxy Z Flip7 FE",
+        "price_vnd": "28878839",
+        "price_usd": "1105",
+        "price_yen": "136012"
+    },
+    {
+        "id": 99,
+        "branch": "Samsung",
+        "model_name": "Galaxy A06 5G",
+        "price_vnd": "3060878",
+        "price_usd": "115",
+        "price_yen": "15958"
+    },
+    {
+        "id": 100,
+        "branch": "Samsung",
+        "model_name": "Galaxy Z Fold Special",
+        "price_vnd": "57663320",
+        "price_usd": "2206",
+        "price_yen": "271580"
+    },
+    {
+        "id": 101,
+        "branch": "Samsung",
+        "model_name": "Galaxy A36",
+        "price_vnd": "6953209",
+        "price_usd": "266",
+        "price_yen": "32747"
+    },
+    {
+        "id": 102,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab Active5",
+        "price_vnd": "14801280",
+        "price_usd": "566",
+        "price_yen": "69710"
+    },
+    {
+        "id": 103,
+        "branch": "Samsung",
+        "model_name": "Galaxy A15",
+        "price_vnd": "4902924",
+        "price_usd": "187",
+        "price_yen": "23091"
+    },
+    {
+        "id": 104,
+        "branch": "Samsung",
+        "model_name": "Galaxy S24",
+        "price_vnd": "13321152",
+        "price_usd": "509",
+        "price_yen": "62739"
+    },
+    {
+        "id": 105,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab S9 FE",
+        "price_vnd": "8506264",
+        "price_usd": "322",
+        "price_yen": "42092"
+    },
+    {
+        "id": 106,
+        "branch": "Samsung",
+        "model_name": "Galaxy Watch6 Classic",
+        "price_vnd": "7101530",
+        "price_usd": "271",
+        "price_yen": "33446"
+    },
+    {
+        "id": 107,
+        "branch": "Samsung",
+        "model_name": "Galaxy A34",
+        "price_vnd": "5735496",
+        "price_usd": "219",
+        "price_yen": "27012"
+    },
+    {
+        "id": 108,
+        "branch": "Samsung",
+        "model_name": "Galaxy A14",
+        "price_vnd": "3778643",
+        "price_usd": "144",
+        "price_yen": "17796"
+    },
+    {
+        "id": 109,
+        "branch": "Samsung",
+        "model_name": "Galaxy M34 5G",
+        "price_vnd": "5858840",
+        "price_usd": "224",
+        "price_yen": "27593"
+    },
+    {
+        "id": 110,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab S9+",
+        "price_vnd": "30836000",
+        "price_usd": "1180",
+        "price_yen": "145230"
+    },
+    {
+        "id": 111,
+        "branch": "Samsung",
+        "model_name": "Galaxy A14 5G",
+        "price_vnd": "4594255",
+        "price_usd": "175",
+        "price_yen": "21637"
+    },
+    {
+        "id": 112,
+        "branch": "Samsung",
+        "model_name": "Galaxy M54",
+        "price_vnd": "5858840",
+        "price_usd": "224",
+        "price_yen": "27593"
+    },
+    {
+        "id": 113,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab S9",
+        "price_vnd": "12547260",
+        "price_usd": "476",
+        "price_yen": "62088"
+    },
+    {
+        "id": 114,
+        "branch": "Samsung",
+        "model_name": "Galaxy S23 Ultra",
+        "price_vnd": "16016218",
+        "price_usd": "612",
+        "price_yen": "75432"
+    },
+    {
+        "id": 115,
+        "branch": "Samsung",
+        "model_name": "Galaxy F14",
+        "price_vnd": "4625400",
+        "price_usd": "177",
+        "price_yen": "21784"
+    },
+    {
+        "id": 116,
+        "branch": "Samsung",
+        "model_name": "Galaxy A23 5G",
+        "price_vnd": "4370694",
+        "price_usd": "167",
+        "price_yen": "20584"
+    },
+    {
+        "id": 117,
+        "branch": "Samsung",
+        "model_name": "Galaxy A04",
+        "price_vnd": "2288589",
+        "price_usd": "86",
+        "price_yen": "11932"
+    },
+    {
+        "id": 118,
+        "branch": "Samsung",
+        "model_name": "Galaxy Z Flip4",
+        "price_vnd": "9374144",
+        "price_usd": "358",
+        "price_yen": "44149"
+    },
+    {
+        "id": 119,
+        "branch": "Samsung",
+        "model_name": "Galaxy S23+",
+        "price_vnd": "12519416",
+        "price_usd": "479",
+        "price_yen": "58963"
+    },
+    {
+        "id": 120,
+        "branch": "Samsung",
+        "model_name": "Galaxy Z Fold4",
+        "price_vnd": "15784640",
+        "price_usd": "604",
+        "price_yen": "74341"
+    },
+    {
+        "id": 121,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab A7 10.4 (2022)",
+        "price_vnd": "7709000",
+        "price_usd": "295",
+        "price_yen": "36307"
+    },
+    {
+        "id": 122,
+        "branch": "Samsung",
+        "model_name": "Galaxy M14 4G",
+        "price_vnd": "2332028",
+        "price_usd": "87",
+        "price_yen": "12158"
+    },
+    {
+        "id": 123,
+        "branch": "Samsung",
+        "model_name": "Galaxy Z Fold5",
+        "price_vnd": "23073345",
+        "price_usd": "882",
+        "price_yen": "108669"
+    },
+    {
+        "id": 124,
+        "branch": "Samsung",
+        "model_name": "Galaxy S23 FE",
+        "price_vnd": "11738956",
+        "price_usd": "449",
+        "price_yen": "55287"
+    },
+    {
+        "id": 125,
+        "branch": "Samsung",
+        "model_name": "Galaxy M14",
+        "price_vnd": "6167200",
+        "price_usd": "236",
+        "price_yen": "29045"
+    },
+    {
+        "id": 126,
+        "branch": "Samsung",
+        "model_name": "Galaxy F54",
+        "price_vnd": "10484240",
+        "price_usd": "401",
+        "price_yen": "49378"
+    },
+    {
+        "id": 127,
+        "branch": "Samsung",
+        "model_name": "Galaxy Z Flip5",
+        "price_vnd": "16581442",
+        "price_usd": "634",
+        "price_yen": "78094"
+    },
+    {
+        "id": 128,
+        "branch": "Samsung",
+        "model_name": "Galaxy Watch5",
+        "price_vnd": "5242120",
+        "price_usd": "200",
+        "price_yen": "24689"
+    },
+    {
+        "id": 129,
+        "branch": "Samsung",
+        "model_name": "Galaxy F15",
+        "price_vnd": "3789728",
+        "price_usd": "142",
+        "price_yen": "19758"
+    },
+    {
+        "id": 130,
+        "branch": "Samsung",
+        "model_name": "Galaxy A54",
+        "price_vnd": "5816286",
+        "price_usd": "222",
+        "price_yen": "27393"
+    },
+    {
+        "id": 131,
+        "branch": "Samsung",
+        "model_name": "Galaxy A04s",
+        "price_vnd": "3188442",
+        "price_usd": "122",
+        "price_yen": "15016"
+    },
+    {
+        "id": 132,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab Active4 Pro",
+        "price_vnd": "25593880",
+        "price_usd": "979",
+        "price_yen": "120540"
+    },
+    {
+        "id": 133,
+        "branch": "Samsung",
+        "model_name": "Galaxy A05",
+        "price_vnd": "2291232",
+        "price_usd": "87",
+        "price_yen": "11337"
+    },
+    {
+        "id": 134,
+        "branch": "Samsung",
+        "model_name": "Galaxy A25",
+        "price_vnd": "6760176",
+        "price_usd": "258",
+        "price_yen": "31838"
+    },
+    {
+        "id": 135,
+        "branch": "Samsung",
+        "model_name": "Galaxy XCover7",
+        "price_vnd": "7215624",
+        "price_usd": "276",
+        "price_yen": "33983"
+    },
+    {
+        "id": 136,
+        "branch": "Samsung",
+        "model_name": "Galaxy Watch6",
+        "price_vnd": "5858840",
+        "price_usd": "224",
+        "price_yen": "27593"
+    },
+    {
+        "id": 137,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab A9",
+        "price_vnd": "5550480",
+        "price_usd": "212",
+        "price_yen": "26141"
+    },
+    {
+        "id": 138,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab S9 FE+",
+        "price_vnd": "21828804",
+        "price_usd": "835",
+        "price_yen": "102808"
+    },
+    {
+        "id": 139,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab S9 Ultra",
+        "price_vnd": "37003200",
+        "price_usd": "1416",
+        "price_yen": "174276"
+    },
+    {
+        "id": 140,
+        "branch": "Samsung",
+        "model_name": "Galaxy Watch5 Pro",
+        "price_vnd": "3391960",
+        "price_usd": "129",
+        "price_yen": "15975"
+    },
+    {
+        "id": 141,
+        "branch": "Samsung",
+        "model_name": "Galaxy A15 5G",
+        "price_vnd": "5241811",
+        "price_usd": "200",
+        "price_yen": "24687"
+    },
+    {
+        "id": 142,
+        "branch": "Samsung",
+        "model_name": "Galaxy M04",
+        "price_vnd": "3083600",
+        "price_usd": "118",
+        "price_yen": "14522"
+    },
+    {
+        "id": 143,
+        "branch": "Samsung",
+        "model_name": "Galaxy S24 Ultra",
+        "price_vnd": "21196974",
+        "price_usd": "811",
+        "price_yen": "99832"
+    },
+    {
+        "id": 144,
+        "branch": "Samsung",
+        "model_name": "Galaxy S23",
+        "price_vnd": "10792600",
+        "price_usd": "413",
+        "price_yen": "50830"
+    },
+    {
+        "id": 145,
+        "branch": "Samsung",
+        "model_name": "Galaxy A04e",
+        "price_vnd": "3160056",
+        "price_usd": "119",
+        "price_yen": "15637"
+    },
+    {
+        "id": 146,
+        "branch": "Samsung",
+        "model_name": "Galaxy A05s",
+        "price_vnd": "3310552",
+        "price_usd": "126",
+        "price_yen": "15591"
+    },
+    {
+        "id": 147,
+        "branch": "Samsung",
+        "model_name": "Galaxy S24+",
+        "price_vnd": "18408783",
+        "price_usd": "704",
+        "price_yen": "86700"
+    },
+    {
+        "id": 148,
+        "branch": "Samsung",
+        "model_name": "Galaxy S20 FE 2022",
+        "price_vnd": "16034720",
+        "price_usd": "613",
+        "price_yen": "75519"
+    },
+    {
+        "id": 149,
+        "branch": "Samsung",
+        "model_name": "Galaxy A13 (SM-A137)",
+        "price_vnd": "5550480",
+        "price_usd": "212",
+        "price_yen": "26141"
+    },
+    {
+        "id": 150,
+        "branch": "Samsung",
+        "model_name": "Galaxy S22 Ultra 5G",
+        "price_vnd": "10083372",
+        "price_usd": "385",
+        "price_yen": "47490"
+    },
+    {
+        "id": 151,
+        "branch": "Samsung",
+        "model_name": "Galaxy S22+ 5G",
+        "price_vnd": "8603244",
+        "price_usd": "329",
+        "price_yen": "40519"
+    },
+    {
+        "id": 152,
+        "branch": "Samsung",
+        "model_name": "Galaxy A23",
+        "price_vnd": "6122048",
+        "price_usd": "230",
+        "price_yen": "31918"
+    },
+    {
+        "id": 153,
+        "branch": "Samsung",
+        "model_name": "Galaxy M22",
+        "price_vnd": "7092280",
+        "price_usd": "271",
+        "price_yen": "33402"
+    },
+    {
+        "id": 154,
+        "branch": "Samsung",
+        "model_name": "Galaxy A12 (India)",
+        "price_vnd": "4933760",
+        "price_usd": "188",
+        "price_yen": "23236"
+    },
+    {
+        "id": 155,
+        "branch": "Samsung",
+        "model_name": "Galaxy Watch4 Classic",
+        "price_vnd": "2775240",
+        "price_usd": "106",
+        "price_yen": "13070"
+    },
+    {
+        "id": 156,
+        "branch": "Samsung",
+        "model_name": "Galaxy F52 5G",
+        "price_vnd": "8017360",
+        "price_usd": "306",
+        "price_yen": "37759"
+    },
+    {
+        "id": 157,
+        "branch": "Samsung",
+        "model_name": "Galaxy A03",
+        "price_vnd": "4100879",
+        "price_usd": "156",
+        "price_yen": "19314"
+    },
+    {
+        "id": 158,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab A7 Lite",
+        "price_vnd": "4317040",
+        "price_usd": "165",
+        "price_yen": "20332"
+    },
+    {
+        "id": 159,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab S6 Lite (2022)",
+        "price_vnd": "12334400",
+        "price_usd": "472",
+        "price_yen": "58091"
+    },
+    {
+        "id": 160,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab A8 10.5 (2021)",
+        "price_vnd": "7092280",
+        "price_usd": "271",
+        "price_yen": "33402"
+    },
+    {
+        "id": 161,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab S8",
+        "price_vnd": "10792600",
+        "price_usd": "413",
+        "price_yen": "50830"
+    },
+    {
+        "id": 162,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab S8 Ultra",
+        "price_vnd": "35461400",
+        "price_usd": "1357",
+        "price_yen": "167014"
+    },
+    {
+        "id": 163,
+        "branch": "Samsung",
+        "model_name": "Galaxy A13 5G",
+        "price_vnd": "3946082",
+        "price_usd": "151",
+        "price_yen": "18585"
+    },
+    {
+        "id": 164,
+        "branch": "Samsung",
+        "model_name": "Galaxy A03s",
+        "price_vnd": "1817184",
+        "price_usd": "69",
+        "price_yen": "8992"
+    },
+    {
+        "id": 165,
+        "branch": "Samsung",
+        "model_name": "Galaxy M52 5G",
+        "price_vnd": "9250800",
+        "price_usd": "354",
+        "price_yen": "43569"
+    },
+    {
+        "id": 166,
+        "branch": "Samsung",
+        "model_name": "Galaxy M13 (India)",
+        "price_vnd": "4625400",
+        "price_usd": "177",
+        "price_yen": "21784"
+    },
+    {
+        "id": 167,
+        "branch": "Samsung",
+        "model_name": "Galaxy Watch4",
+        "price_vnd": "3391960",
+        "price_usd": "129",
+        "price_yen": "15975"
+    },
+    {
+        "id": 168,
+        "branch": "Samsung",
+        "model_name": "Galaxy A22 5G",
+        "price_vnd": "3414470",
+        "price_usd": "130",
+        "price_yen": "16081"
+    },
+    {
+        "id": 169,
+        "branch": "Samsung",
+        "model_name": "Galaxy A13",
+        "price_vnd": "3511912",
+        "price_usd": "134",
+        "price_yen": "16540"
+    },
+    {
+        "id": 170,
+        "branch": "Samsung",
+        "model_name": "Galaxy F23",
+        "price_vnd": "5858840",
+        "price_usd": "224",
+        "price_yen": "27593"
+    },
+    {
+        "id": 171,
+        "branch": "Samsung",
+        "model_name": "Galaxy M32 5G",
+        "price_vnd": "6783920",
+        "price_usd": "259",
+        "price_yen": "31950"
+    },
+    {
+        "id": 172,
+        "branch": "Samsung",
+        "model_name": "Galaxy M53",
+        "price_vnd": "8017051",
+        "price_usd": "306",
+        "price_yen": "37758"
+    },
+    {
+        "id": 173,
+        "branch": "Samsung",
+        "model_name": "Galaxy A12 Nacho",
+        "price_vnd": "4008680",
+        "price_usd": "153",
+        "price_yen": "18879"
+    },
+    {
+        "id": 174,
+        "branch": "Samsung",
+        "model_name": "Galaxy Tab S7 FE",
+        "price_vnd": "20043400",
+        "price_usd": "767",
+        "price_yen": "94399"
+    },
+    {
+        "id": 175,
+        "branch": "Samsung",
+        "model_name": "Galaxy A53 5G",
+        "price_vnd": "6387677",
+        "price_usd": "244",
+        "price_yen": "30084"
+    },
+    {
+        "id": 176,
+        "branch": "Samsung",
+        "model_name": "Galaxy S22 5G",
+        "price_vnd": "7061444",
+        "price_usd": "270",
+        "price_yen": "33257"
+    },
+    {
+        "id": 177,
+        "branch": "Samsung",
+        "model_name": "Galaxy A52s 5G",
+        "price_vnd": "8017360",
+        "price_usd": "306",
+        "price_yen": "37759"
+    },
+    {
+        "id": 178,
+        "branch": "Samsung",
+        "model_name": "Galaxy M13",
+        "price_vnd": "3965509",
+        "price_usd": "151",
+        "price_yen": "18676"
+    },
+    {
+        "id": 179,
+        "branch": "Samsung",
+        "model_name": "Galaxy S21 FE 5G",
+        "price_vnd": "6475560",
+        "price_usd": "247",
+        "price_yen": "30498"
+    },
+    {
+        "id": 180,
+        "branch": "Samsung",
+        "model_name": "Galaxy A22",
+        "price_vnd": "6136672",
+        "price_usd": "234",
+        "price_yen": "28902"
+    },
+    {
+        "id": 181,
+        "branch": "Samsung",
+        "model_name": "Galaxy M42 5G",
+        "price_vnd": "6783920",
+        "price_usd": "259",
+        "price_yen": "31950"
+    },
+    {
+        "id": 182,
+        "branch": "Samsung",
+        "model_name": "Galaxy F22",
+        "price_vnd": "5242120",
+        "price_usd": "200",
+        "price_yen": "24689"
+    },
+    {
+        "id": 183,
+        "branch": "Samsung",
+        "model_name": "Galaxy F13",
+        "price_vnd": "4625400",
+        "price_usd": "177",
+        "price_yen": "21784"
+    },
+    {
+        "id": 184,
+        "branch": "Samsung",
+        "model_name": "Galaxy M32",
+        "price_vnd": "5550480",
+        "price_usd": "212",
+        "price_yen": "26141"
+    },
+    {
+        "id": 185,
+        "branch": "Samsung",
+        "model_name": "Galaxy M21 2021",
+        "price_vnd": "4008680",
+        "price_usd": "153",
+        "price_yen": "18879"
+    },
+    {
+        "id": 186,
+        "branch": "Samsung",
+        "model_name": "Galaxy M12",
+        "price_vnd": "5242120",
+        "price_usd": "200",
+        "price_yen": "24689"
+    },
+    {
+        "id": 187,
+        "branch": "Samsung",
+        "model_name": "Galaxy A33 5G",
+        "price_vnd": "5116309",
+        "price_usd": "195",
+        "price_yen": "24096"
+    },
+    {
+        "id": 188,
+        "branch": "Samsung",
+        "model_name": "Galaxy Z Flip3 5G",
+        "price_vnd": "8788260",
+        "price_usd": "336",
+        "price_yen": "41390"
+    },
+    {
+        "id": 189,
+        "branch": "Samsung",
+        "model_name": "Galaxy A03 Core",
+        "price_vnd": "1816920",
+        "price_usd": "68",
+        "price_yen": "8990"
+    },
+    {
+        "id": 190,
+        "branch": "Samsung",
+        "model_name": "Galaxy Z Fold3 5G",
+        "price_vnd": "16959800",
+        "price_usd": "649",
+        "price_yen": "79876"
+    },
+    {
+        "id": 191,
+        "branch": "Samsung",
+        "model_name": "Galaxy F42 5G",
+        "price_vnd": "7400640",
+        "price_usd": "283",
+        "price_yen": "34855"
+    },
+    {
+        "id": 192,
+        "branch": "Samsung",
+        "model_name": "Galaxy M23",
+        "price_vnd": "6463842",
+        "price_usd": "247",
+        "price_yen": "30443"
+    },
+    {
+        "id": 193,
+        "branch": "Samsung",
+        "model_name": "Galaxy M33",
+        "price_vnd": "8633771",
+        "price_usd": "330",
+        "price_yen": "40662"
+    },
+    {
+        "id": 194,
+        "branch": "Samsung",
+        "model_name": "Galaxy M13 5G",
+        "price_vnd": "5550480",
+        "price_usd": "212",
+        "price_yen": "26141"
+    },
+    {
+        "id": 195,
+        "branch": "Samsung",
+        "model_name": "Galaxy A73 5G",
+        "price_vnd": "18501600",
+        "price_usd": "708",
+        "price_yen": "87138"
+    },
+    {
+        "id": 196,
+        "branch": "Samsung",
+        "model_name": "Galaxy XCover6 Pro",
+        "price_vnd": "8940898",
+        "price_usd": "342",
+        "price_yen": "42109"
+    },
+    {
+        "id": 197,
+        "branch": "Samsung",
+        "model_name": "Galaxy A52 5G",
+        "price_vnd": "7839127",
+        "price_usd": "299",
+        "price_yen": "36920"
+    },
+    {
+        "id": 198,
+        "branch": "Sony",
+        "model_name": "Xperia 1 VI",
+        "price_vnd": "46099820",
+        "price_usd": "1764",
+        "price_yen": "217118"
+    },
+    {
+        "id": 199,
+        "branch": "Sony",
+        "model_name": "Xperia 5 IV",
+        "price_vnd": "26309664",
+        "price_usd": "999",
+        "price_yen": "130189"
+    },
+    {
+        "id": 200,
+        "branch": "Sony",
+        "model_name": "Xperia 5 V",
+        "price_vnd": "33735889",
+        "price_usd": "1280",
+        "price_yen": "166937"
+    },
+    {
+        "id": 201,
+        "branch": "Sony",
+        "model_name": "Xperia XA1 Ultra",
+        "price_vnd": "7709000",
+        "price_usd": "295",
+        "price_yen": "36307"
+    },
+    {
+        "id": 202,
+        "branch": "Sony",
+        "model_name": "Xperia Pro-I",
+        "price_vnd": "28677480",
+        "price_usd": "1097",
+        "price_yen": "135063"
+    },
+    {
+        "id": 203,
+        "branch": "Sony",
+        "model_name": "Xperia 1 II",
+        "price_vnd": "21585200",
+        "price_usd": "826",
+        "price_yen": "101661"
+    }
+]
