@@ -72,149 +72,142 @@ async def router_node(state: AgentState, config: RunnableConfig) -> dict:
         # Fallback to last message content
         query = messages[-1].content if messages else ""
 
-    # Check Working Memory for frozen intent
-    working_memory = state.get("working_memory")
-    if (
-        working_memory
-        and working_memory.get("intent_frozen")
-        and working_memory.get("intent")
-    ):
-        final_route = working_memory["intent"]
-        # Ensure route is valid for next steps
-        current_requirements = (
-            state.get("requirements", {}).copy() if state.get("requirements") else {}
-        )
-    else:
-        # 1. Routing via LLM
-        final_decision = None
-        if query:
-            try:
-                # Use temperature=0 for consistent classification
-                llm = get_llm(temperature=0)
-                structured_llm = llm.with_structured_output(RouteDecision)
+    # Query is already resolved by context_resolution_node
+    # We will ALWAYS run the Routing Logic fresh for every turn.
 
-                prompt = ChatPromptTemplate.from_messages(
-                    [("system", SYSTEM_ROUTER_TEMPLATE), ("user", "{question}")]
-                )
+    # 1. Routing via LLM
+    final_decision = None
+    if query:
+        try:
+            # Use temperature=0 for consistent classification
+            llm = get_llm(temperature=0)
+            structured_llm = llm.with_structured_output(RouteDecision)
 
-                chain = prompt | structured_llm
-                final_decision = await chain.ainvoke({"question": query}, config=config)
-            except Exception as e:
-                print(f"Router LLM Error: {e}")
+            prompt = ChatPromptTemplate.from_messages(
+                [("system", SYSTEM_ROUTER_TEMPLATE), ("user", "{question}")]
+            )
 
-        # Fallback if something went wrong
-        if not final_decision or "route" not in final_decision:
-            final_decision = {
-                "route": "GENERAL",
-                "confidence": 0.0,
-                "reason": "Fallback: LLM routing failed",
-            }
+            chain = prompt | structured_llm
+            final_decision = await chain.ainvoke({"question": query}, config=config)
+        except Exception as e:
+            print(f"Router LLM Error: {e}")
 
-        final_route = final_decision["route"]
-
-        # 2. Extract Requirements if needed (only for RECOMMENDATION or updated requirement)
-        # We keep this side-effect to maintain state for recommendation_node
-        current_requirements = (
-            state.get("requirements", {}).copy() if state.get("requirements") else {}
-        )
-
-        # ALWAYS run keyword fallback for brand detection (regardless of route)
-        # This ensures short responses like "samsung" are captured
-        query_lower = query.lower()
-        brand_keywords = {
-            "Apple": ["iphone", "apple", "táo khuyết"],
-            "Samsung": ["samsung", "galaxy"],
-            "Sony": ["sony", "xperia"],
-            "Oppo": ["oppo"],
-            "Xiaomi": ["xiaomi", "redmi", "poco"],
-            "Vivo": ["vivo"],
-            "Realme": ["realme"],
-            "OnePlus": ["oneplus"],
-            "Google": ["pixel", "google phone"],
-            "Huawei": ["huawei"],
+    # Fallback if something went wrong
+    if not final_decision or "route" not in final_decision:
+        final_decision = {
+            "route": "GENERAL",
+            "confidence": 0.0,
+            "reason": "Fallback: LLM routing failed",
         }
 
-        # Check for brand keywords
-        detected_brand = None
-        for brand, keywords in brand_keywords.items():
-            if any(kw in query_lower for kw in keywords):
-                detected_brand = brand
+    final_route = final_decision["route"]
+    current_requirements = (
+        state.get("requirements", {}).copy() if state.get("requirements") else {}
+    )
+    # 1. Routing via LLM (Done above now)
 
-                break
+    # ... (Logic moved up) ...
 
-        # If brand detected, add to requirements immediately
-        if detected_brand:
-            current_requirements["brand"] = detected_brand
+    # 2. Extract Requirements if needed (only for RECOMMENDATION or updated requirement)
+    # We keep this side-effect to maintain state for recommendation_node
 
-        # Now run full extraction only for RECOMMENDATION route
-        if final_route == "RECOMMENDATION":
-            extract_chain = build_extraction_chain()
-            try:
-                extracted = await extract_chain.ainvoke({"text": query}, config=config)
+    # ALWAYS run keyword fallback for brand detection (regardless of route)
+    # This ensures short responses like "samsung" are captured
+    query_lower = query.lower()
+    brand_keywords = {
+        "Apple": ["iphone", "apple", "táo khuyết"],
+        "Samsung": ["samsung", "galaxy"],
+        "Sony": ["sony", "xperia"],
+        "Oppo": ["oppo"],
+        "Xiaomi": ["xiaomi", "redmi", "poco"],
+        "Vivo": ["vivo"],
+        "Realme": ["realme"],
+        "OnePlus": ["oneplus"],
+        "Google": ["pixel", "google phone"],
+        "Huawei": ["huawei"],
+    }
 
-                # If LLM extracted a brand and we didn't have one from keywords, use LLM's
-                if extracted.get("brand") and not detected_brand:
-                    current_requirements["brand"] = extracted["brand"]
+    # Check for brand keywords
+    detected_brand = None
+    for brand, keywords in brand_keywords.items():
+        if any(kw in query_lower for kw in keywords):
+            detected_brand = brand
 
-                # USAGE KEYWORD FALLBACK: Override usage if LLM extraction seems wrong
-                # Detect actual usage needs from query text
-                usage_keywords = {
-                    "Photography": [
-                        "chụp ảnh",
-                        "camera",
-                        "photo",
-                        "nhiếp ảnh",
-                        "quay phim",
-                        "selfie",
-                    ],
-                    "Gaming": ["chơi game", "gaming", "game", "hiệu năng cao", "chơi"],
-                    "Long-term Travel": [
-                        "pin trâu",
-                        "pin khỏe",
-                        "pin tốt",
-                        "battery",
-                        "dung lượng pin",
-                        "pin lâu",
-                    ],
-                    "Media Consumption": [
-                        "xem phim",
-                        "giải trí",
-                        "màn hình đẹp",
-                        "watching movies",
-                        "video",
-                    ],
-                    "Multitasking": [
-                        "làm việc",
-                        "đa nhiệm",
-                        "work",
-                        "multiple apps",
-                        "productivity",
-                    ],
-                }
+            break
 
-                detected_usages = []
-                for usage_type, keywords in usage_keywords.items():
-                    if any(kw in query_lower for kw in keywords):
-                        detected_usages.append(usage_type)
+    # If brand detected, add to requirements immediately
+    if detected_brand:
+        current_requirements["brand"] = detected_brand
 
-                # Apply usage fallback
-                if detected_usages:
-                    # If we detected specific usages, use them instead of LLM output
-                    if extracted.get("usage") != detected_usages:
-                        extracted["usage"] = detected_usages
-                else:
-                    # If NO usage keywords detected, remove the usage field entirely
-                    # (avoid defaulting to Gaming)
-                    if "usage" in extracted:
-                        del extracted["usage"]
+    # Now run full extraction only for RECOMMENDATION route
+    if final_route == "RECOMMENDATION":
+        extract_chain = build_extraction_chain()
+        try:
+            extracted = await extract_chain.ainvoke({"text": query}, config=config)
 
-                # Merge other extracted fields (price, etc.)
-                for k, v in extracted.items():
-                    if v and k != "brand":  # Skip brand as we handled it above
-                        current_requirements[k] = v
+            # If LLM extracted a brand and we didn't have one from keywords, use LLM's
+            if extracted.get("brand") and not detected_brand:
+                current_requirements["brand"] = extracted["brand"]
 
-            except Exception as e:
-                print(f"Extraction failed: {e}")
+            # USAGE KEYWORD FALLBACK: Override usage if LLM extraction seems wrong
+            # Detect actual usage needs from query text
+            usage_keywords = {
+                "Photography": [
+                    "chụp ảnh",
+                    "camera",
+                    "photo",
+                    "nhiếp ảnh",
+                    "quay phim",
+                    "selfie",
+                ],
+                "Gaming": ["chơi game", "gaming", "game", "hiệu năng cao", "chơi"],
+                "Long-term Travel": [
+                    "pin trâu",
+                    "pin khỏe",
+                    "pin tốt",
+                    "battery",
+                    "dung lượng pin",
+                    "pin lâu",
+                ],
+                "Media Consumption": [
+                    "xem phim",
+                    "giải trí",
+                    "màn hình đẹp",
+                    "watching movies",
+                    "video",
+                ],
+                "Multitasking": [
+                    "làm việc",
+                    "đa nhiệm",
+                    "work",
+                    "multiple apps",
+                    "productivity",
+                ],
+            }
+
+            detected_usages = []
+            for usage_type, keywords in usage_keywords.items():
+                if any(kw in query_lower for kw in keywords):
+                    detected_usages.append(usage_type)
+
+            # Apply usage fallback
+            if detected_usages:
+                # If we detected specific usages, use them instead of LLM output
+                if extracted.get("usage") != detected_usages:
+                    extracted["usage"] = detected_usages
+            else:
+                # If NO usage keywords detected, remove the usage field entirely
+                # (avoid defaulting to Gaming)
+                if "usage" in extracted:
+                    del extracted["usage"]
+
+            # Merge other extracted fields (price, etc.)
+            for k, v in extracted.items():
+                if v and k != "brand":  # Skip brand as we handled it above
+                    current_requirements[k] = v
+
+        except Exception as e:
+            print(f"Extraction failed: {e}")
 
     # NEW: Update Working Memory
     # Prepare info to merge
@@ -229,11 +222,8 @@ async def router_node(state: AgentState, config: RunnableConfig) -> dict:
     }
 
     # If we had LLM decision with confidence, use it (if not frozen)
-    if (
-        not (working_memory and working_memory.get("intent_frozen"))
-        and "final_decision" in locals()
-        and final_decision
-    ):
+    # If we had LLM decision with confidence, use it
+    if "final_decision" in locals() and final_decision:
         memory_update["confidence"] = final_decision.get("confidence", 0.0)
 
     # Sync requirements to memory updates (simple mapping)

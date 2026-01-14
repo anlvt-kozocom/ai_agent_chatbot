@@ -12,6 +12,7 @@ from app.agents.retrieval_strategy_agent import retrieval_strategy_node
 from app.agents.price_agent import price_filtering_node
 from app.agents.recall_agent import recall_node
 from app.agents.precision_agent import precision_node
+from app.agents.sql_agent import sql_filtering_node  # NEW: SQL Agent
 
 
 def route_decision(state: AgentState) -> str:
@@ -100,19 +101,43 @@ def check_brand_requirement(state: AgentState) -> str:
 
 def route_after_retrieval(state: AgentState) -> str:
     """
-    Conditional edge to skip Price Filtering for certain routes.
+    Conditional edge to decide between SQL Agent or Price Filtering.
+
+    SQL Agent is used for complex queries with:
+    - Battery requirements
+    - Top N queries
+    - Multi-condition queries (price + battery + brand)
+
+    Otherwise, use the existing Price Filtering node.
     """
     route = state.get("route", "GENERAL")
     if route:
         route = route.upper()
 
+    # General and Product Info routes skip both SQL and Price filtering
     if route == "GENERAL":
         return "general_node"
 
     if route == "PRODUCT_INFO":
         return "recall_node"
 
-    # Default logic (RECOMMENDATION, COMPARISON, etc.) uses Price Filtering
+    # Check requirements for complex query indicators
+    requirements = state.get("requirements", {})
+
+    # Use SQL Agent if:
+    # 1. Battery requirement is present
+    # 2. num_products (top N) is specified
+    # 3. Multiple conditions (battery + price, etc.)
+    use_sql_agent = requirements.get("battery") is not None or (
+        requirements.get("num_products") is not None
+        and requirements.get("num_products") > 0
+    )
+
+    if use_sql_agent:
+        print(f"✅ Routing to SQL Agent (complex query detected): {requirements}")
+        return "sql_filtering_node"
+
+    # Default: use existing Price Filtering for simple price queries
     return "price_filtering_node"
 
 
@@ -128,6 +153,7 @@ def build_graph():
     workflow.add_node("router_node", router_node)
     workflow.add_node("retrieval_strategy_node", retrieval_strategy_node)
     workflow.add_node("price_filtering_node", price_filtering_node)
+    workflow.add_node("sql_filtering_node", sql_filtering_node)  # NEW: SQL Agent
     workflow.add_node("recall_node", recall_node)
     workflow.add_node("precision_node", precision_node)
     workflow.add_node("product_info_node", product_info_node)
@@ -148,18 +174,20 @@ def build_graph():
     workflow.add_edge("router_node", "retrieval_strategy_node")
 
     # Retrieval Strategy -> Conditional Branching
-    # PRODUCT_INFO and GENERAL skip price filtering logic
+    # Routes to: SQL Agent (complex), Price Filter (simple), Recall (direct), or General
     workflow.add_conditional_edges(
         "retrieval_strategy_node",
         route_after_retrieval,
         {
+            "sql_filtering_node": "sql_filtering_node",
             "price_filtering_node": "price_filtering_node",
             "recall_node": "recall_node",
             "general_node": "general_node",
         },
     )
 
-    # Price Filtering -> Recall -> Precision
+    # Both SQL and Price Filtering feed into Recall
+    workflow.add_edge("sql_filtering_node", "recall_node")
     workflow.add_edge("price_filtering_node", "recall_node")
     workflow.add_edge("recall_node", "precision_node")
 

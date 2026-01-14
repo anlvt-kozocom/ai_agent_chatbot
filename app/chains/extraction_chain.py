@@ -17,6 +17,7 @@ class Requirements(TypedDict, total=False):
     color: Optional[str]
     specs: Optional[str]
     num_products: Optional[int]
+    battery: Optional[str]  # Battery capacity (e.g., "5000", "over 5000mAh")
 
 
 def build_extraction_chain():

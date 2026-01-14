@@ -15,7 +15,6 @@ def get_empty_working_memory() -> WorkingMemory:
     return {
         "intent": None,
         "intent_confidence": 0.0,
-        "intent_frozen": False,
         "budget_range": None,
         "preferred_brands": None,
         "product_category": None,
@@ -43,18 +42,11 @@ async def update_working_memory(
     """
     current_wm = state.get("working_memory") or get_empty_working_memory()
 
-    # If intent is frozen, we only update constraints, not the intent itself
-    # unless a "RESET" signal is detected (which would be handled by Router logic mostly)
-
     if new_info:
         # Merge logic
-        if new_info.get("intent") and not current_wm["intent_frozen"]:
+        if new_info.get("intent"):
             current_wm["intent"] = new_info["intent"]
             current_wm["intent_confidence"] = new_info.get("confidence", 0.0)
-
-            # Auto-freeze if confidence is high
-            if current_wm["intent_confidence"] >= INTENT_CONFIDENCE_THRESHOLD:
-                current_wm["intent_frozen"] = True
 
         # Update constraints (Merge lists/dicts)
         if new_info.get("updates"):

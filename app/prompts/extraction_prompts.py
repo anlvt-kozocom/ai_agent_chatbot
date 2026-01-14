@@ -8,12 +8,17 @@ EXTRACTION_SYSTEM_PROMPT = """Extract phone search requirements from the user's 
   
 - **price**: Price or budget
   * Vietnamese: "20 triệu" → "20000000 VND", "dưới 10tr" → "under 10000000 VND"
-  * Vietnamese: "20 triệu" → "20000000 VND", "dưới 10tr" → "under 10000000 VND"
   * Keep currency: "$500" → "$500"
 
 - **price_sort**: Sort order by price
   * "đắt nhất"/"most expensive" → "desc"
   * "rẻ nhất"/"cheapest" → "asc"
+  
+- **battery**: Battery capacity requirement
+  * "pin trên 5000"/"battery over 5000" → "over 5000"
+  * "pin từ 4000 đến 6000" → "4000-6000"
+  * "5000mAh" → "5000"
+  * CRITICAL: Only extract if EXPLICITLY mentioned
   
 - **usage**: List of usage needs
   * "chơi game"/"gaming" → ["Gaming"]
@@ -69,12 +74,22 @@ Output: {{"brand": "Apple", "price_sort": "desc", "phone_type": "Smartphone"}}
 Query: "điện thoại nào đắt nhất"
 Output: {{"price_sort": "desc", "phone_type": "Smartphone"}}
 
+Query: "điện thoại pin trên 5000mAh"
+Output: {{"battery": "over 5000", "phone_type": "Smartphone"}}
+
+Query: "samsung giá dưới 10 triệu pin trên 5000"
+Output: {{"brand": "Samsung", "price": "under 10000000 VND", "battery": "over 5000", "phone_type": "Smartphone"}}
+
+Query: "top 5 điện thoại rẻ nhất có pin tốt"
+Output:{{"num_products": 5, "price_sort": "asc", "battery": "over 4000", "phone_type": "Smartphone"}}
+
 **CRITICAL RULES:**
 - Extract ONLY from the user's actual message
 - Do NOT invent, assume, or use default values
 - If a field is not explicitly mentioned, use null or omit it entirely
 - NEVER add brand if not mentioned - it MUST be null
 - NEVER add usage if not mentioned - it MUST be null or empty list
+- NEVER add battery if not mentioned - it MUST be null
 - When in doubt, return null rather than guessing
 
 User message: {text}

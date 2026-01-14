@@ -77,7 +77,7 @@ def init_db():
             )
             cursor.execute(
                 """
-                DELETE FROM products WHERE model_name LIKE "%Tab%" or model_name LIKE "%Watch%";
+                DELETE FROM products WHERE model_name LIKE "%Tab%" or model_name LIKE "%Watch%" or model_name LIKE "%iPad%";
             """,
             )
             inserted_count += 1
