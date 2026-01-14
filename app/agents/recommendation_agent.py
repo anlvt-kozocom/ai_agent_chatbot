@@ -90,10 +90,40 @@ async def recommendation_node(state: AgentState, config: RunnableConfig) -> dict
     )
 
     # --- POST PROCESS: Price Correction ---
-    # Replace extracted prices with official ones if model names are found
-    response_text = _post_process_prices(
-        response_text, price_tool.get_all_products(), language
-    )
+    # Extract products from precision_docs to avoid conflicts with similar model names
+    # (e.g., "S23" vs "S23 Ultra", "XCover7" vs "XCover7 Pro")
+    precision_products = []
+    seen_ids = set()
+
+    for doc in docs:
+        # Try to get product info from precision docs
+        product_id = doc.metadata.get("product_id")
+        model_name = doc.metadata.get("model") or doc.metadata.get("model_name")
+        brand = doc.metadata.get("brand")
+
+        # Try to lookup by product_id first
+        if product_id and product_id not in seen_ids:
+            products_by_id = [
+                p
+                for p in price_tool.get_all_products()
+                if str(p.get("id")) == str(product_id)
+            ]
+            if products_by_id:
+                precision_products.append(products_by_id[0])
+                seen_ids.add(product_id)
+                continue
+
+        # Fallback: lookup by brand + model name
+        if model_name:
+            lookup_name = f"{brand} {model_name}" if brand else model_name
+            price_info = price_tool.get_price_by_name(lookup_name)
+            if price_info:
+                pid = str(price_info.get("id"))
+                if pid not in seen_ids:
+                    precision_products.append(price_info)
+                    seen_ids.add(pid)
+
+    response_text = _post_process_prices(response_text, precision_products, language)
 
     current_path = state.get("path") or []
     new_path = current_path + ["recommendation_node"]

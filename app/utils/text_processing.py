@@ -69,9 +69,14 @@ def format_device_to_text(brand: str, device: Dict[str, Any], lang: str = "en") 
     if "price_range" in device:
         text_parts.append(f"{labels['market_segment']}: {device['price_range']}")
 
-    if "price" in device:
-        text_parts.append(f"{labels['price']}: {device['price']}")
-    print(device["model_name"] + device["price"])
+    # Add prices from new structure (prioritize VND for Vietnamese, USD for others)
+    if lang == "vi" and "price_vnd" in device:
+        price_vnd = device["price_vnd"]
+        text_parts.append(f"{labels['price']}: {price_vnd:,} VND")
+    elif "price_usd" in device:
+        price_usd = device["price_usd"]
+        text_parts.append(f"{labels['price']}: ${price_usd}")
+
     # Detailed Specifications
     if specs:
         text_parts.append(f"\n{labels['tech_specs']}:")
@@ -132,9 +137,18 @@ def load_text_files(directory: str) -> List[Document]:
                             # Extract fields for metadata
                             specs = device.get("specifications", {})
 
-                            # 1. Price
-                            price_str = device.get("price", "")
-                            price_val = clean_number(price_str)
+                            # 1. Price - use new structure
+                            # Priority: VND for Vietnamese, USD for international
+                            price_vnd = device.get("price_vnd", 0)
+                            price_usd = device.get("price_usd", 0)
+
+                            # Use VND as primary price for filtering (since we're mainly Vietnamese market)
+                            price_val = int(price_vnd) if price_vnd else 0
+                            price_str = (
+                                f"{price_vnd:,} VND"
+                                if price_vnd
+                                else (f"${price_usd}" if price_usd else "")
+                            )
 
                             # 2. Specs (Battery, Memory)
                             # Note: Correct path is device -> specifications -> Battery/Memory
@@ -168,19 +182,26 @@ def load_text_files(directory: str) -> List[Document]:
                                 "battery_info": bat_info,
                             }
 
-                            # Add product id from PriceTool for filtering support
-                            price_info = price_tool.get_price_by_name(
-                                device.get("model_name")
-                            )
-                            if price_info and "id" in price_info:
-                                metadata["product_id"] = str(price_info["id"])
+                            # Add product_id if available (from synced data)
+                            if "product_id" in device:
+                                metadata["product_id"] = str(device["product_id"])
                             else:
-                                metadata["product_id"] = None
+                                # Fallback: try to get from PriceTool
+                                price_info = price_tool.get_price_by_name(
+                                    device.get("model_name")
+                                )
+                                if price_info and "id" in price_info:
+                                    metadata["product_id"] = str(price_info["id"])
+                                else:
+                                    metadata["product_id"] = None
 
                             documents.append(
                                 Document(page_content=content, metadata=metadata)
                             )
             except Exception as e:
+                import traceback
+
+                traceback.print_exc()
                 print(f"Error reading JSON file {filename}: {e}")
 
     return documents

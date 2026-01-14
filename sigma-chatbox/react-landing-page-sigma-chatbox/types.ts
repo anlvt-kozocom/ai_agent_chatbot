@@ -26,6 +26,10 @@ export interface Banner {
   subtitle: string;
 }
 
+export interface CartItem extends Product {
+  quantity: number;
+}
+
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant";

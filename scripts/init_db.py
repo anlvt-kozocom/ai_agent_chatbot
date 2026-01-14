@@ -75,6 +75,11 @@ def init_db():
             """,
                 (p_id, branch, model_name, price_vnd, price_usd, price_yen, quantity),
             )
+            cursor.execute(
+                """
+                DELETE FROM products WHERE model_name LIKE "%Tab%" or model_name LIKE "%Watch%";
+            """,
+            )
             inserted_count += 1
 
         except Exception as e:

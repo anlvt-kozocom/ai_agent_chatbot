@@ -8,8 +8,9 @@ import ProductModal from "./components/ProductModal";
 import { Chatbox } from "react-sigma-chatbox";
 import "react-sigma-chatbox/dist/react-sigma-chatbox.css";
 import { geminiService } from "./services/geminiService";
-import { BrandCategory, Banner, Product } from "./types";
+import { BrandCategory, Banner, Product, CartItem } from "./types";
 import { productList } from "@/constants/productList";
+import CartDrawer from "./components/CartDrawer";
 
 const App: React.FC = () => {
   // State
@@ -17,6 +18,8 @@ const App: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const itemsPerPage = 20;
 
   // Data mocks from Sample.tsx
@@ -24,11 +27,7 @@ const App: React.FC = () => {
     { id: "apple", name: "Apple", logo: "" },
     { id: "samsung", name: "Samsung", logo: "" },
     { id: "sony", name: "sony", logo: "" },
-    { id: "oppo", name: "OPPO", logo: "" },
-    { id: "vivo", name: "Vivo", logo: "" },
     { id: "realme", name: "Realme", logo: "" },
-    { id: "asus", name: "Asus", logo: "" },
-    { id: "nokia", name: "Nokia", logo: "" },
   ]);
 
   const [banners] = useState<Banner[]>([
@@ -115,6 +114,66 @@ const App: React.FC = () => {
     setCurrentPage(1);
   }, [activeBrand, searchQuery]);
 
+  // Cart Persistence
+  React.useEffect(() => {
+    const savedCart = localStorage.getItem("cart");
+    if (savedCart) {
+      try {
+        setCartItems(JSON.parse(savedCart));
+      } catch (e) {
+        console.error("Failed to load cart", e);
+      }
+    }
+  }, []);
+
+  React.useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+  }, [cartItems]);
+
+  const cartCount = useMemo(() => {
+    return cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  }, [cartItems]);
+
+  const cartTotal = useMemo(() => {
+    return cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  }, [cartItems]);
+
+  const addToCart = (product: Product) => {
+    setCartItems((prev) => {
+      const existing = prev.find((item) => item.id === product.id);
+      if (existing) {
+        return prev.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+      return [...prev, { ...product, quantity: 1 }];
+    });
+    setIsCartOpen(true);
+    setSelectedProduct(null); // Close modal when adding to cart
+  };
+
+  const removeFromCart = (productId: number) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== productId));
+  };
+
+  const updateQuantity = (productId: number, change: number) => {
+    setCartItems((prev) =>
+      prev.map((item) => {
+        if (item.id === productId) {
+          const newQuantity = Math.max(1, item.quantity + change);
+          return { ...item, quantity: newQuantity };
+        }
+        return item;
+      })
+    );
+  };
+
+  const toggleCart = () => {
+    setIsCartOpen(!isCartOpen);
+  };
+
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * itemsPerPage,
@@ -145,6 +204,8 @@ const App: React.FC = () => {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           onResetBrand={handleResetBrand}
+          cartCount={cartCount}
+          onToggleCart={toggleCart}
         />
 
         <CategoryBar
@@ -174,7 +235,19 @@ const App: React.FC = () => {
         </main>
 
         <Footer />
-        <ProductModal product={selectedProduct} onClose={closeProductModal} />
+        <ProductModal
+          product={selectedProduct}
+          onClose={closeProductModal}
+          onAddToCart={addToCart}
+        />
+        <CartDrawer
+          isOpen={isCartOpen}
+          onClose={toggleCart}
+          items={cartItems}
+          onRemove={removeFromCart}
+          onUpdateQuantity={updateQuantity}
+          total={cartTotal}
+        />
       </div>
       <Chatbox config={config} onGetAiResponse={handleAiResponse} />
     </>

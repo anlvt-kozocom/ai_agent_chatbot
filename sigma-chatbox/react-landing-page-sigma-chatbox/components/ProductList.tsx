@@ -182,7 +182,7 @@ const ProductList: React.FC<ProductListProps> = ({
                 : "bg-white text-gray-700 hover:bg-gray-50 hover:text-blue-600 border-gray-200"
             }`}
           >
-            Previous
+            Trước
           </button>
 
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
@@ -208,7 +208,7 @@ const ProductList: React.FC<ProductListProps> = ({
                 : "bg-white text-gray-700 hover:bg-gray-50 hover:text-blue-600 border-gray-200"
             }`}
           >
-            Next
+            Sau
           </button>
         </div>
       )}

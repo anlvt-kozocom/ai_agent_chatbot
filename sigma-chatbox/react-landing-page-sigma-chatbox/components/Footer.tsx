@@ -80,9 +80,7 @@ const Footer: React.FC = () => {
           <div>
             <h5 className="font-bold mb-4 text-gray-200">Liên hệ</h5>
             <p className="text-gray-400 text-sm mb-2">Hotline: 1800.0000</p>
-            <p className="text-gray-400 text-sm mb-4">
-              Email: cskh@mobilestore.com
-            </p>
+            <p className="text-gray-400 text-sm mb-4">Email: cskh@sigma.com</p>
             <div className="flex space-x-3">
               <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors cursor-pointer">
                 <span className="font-bold text-xs">F</span>
@@ -99,7 +97,7 @@ const Footer: React.FC = () => {
 
         <div className="border-t border-gray-800 pt-6 text-center">
           <p className="text-gray-500 text-xs">
-            © 2024 MobileStore. All rights reserved.
+            © 2025 Sigma. All rights reserved.
           </p>
         </div>
       </div>

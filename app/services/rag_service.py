@@ -233,15 +233,35 @@ class RAGService:
             actual_top_k = min(
                 top_k * 5 + len(candidate_ids), 100
             )  # Increased cap for safety
+            actual_top_k = min(
+                top_k * 5 + len(candidate_ids), 100
+            )  # Increased cap for safety
             search_kwargs["k"] = actual_top_k
+
+        # CRITICAL: Increase fetch_k when using filters or candidate_ids
+        # Since EN docs might dominate top ranks, we need to scan deeper to find VI docs
+        # Setting fetch_k to index size (approx) ensures we check enough docs
+        search_kwargs["fetch_k"] = 2000
 
         docs = []
         if strategy == "NO_RAG":
             return []
 
         # Execute search
+        # Pass filter to vector store to ensure we get relevant docs within top_k
+        # This is critical when one language dominates the vector store (e.g. 800 EN docs vs 200 VI docs)
+        search_filter = metadata_filter if metadata_filter else None
 
-        results = await self.vector_store.asimilarity_search(query, **search_kwargs)
+        try:
+            results = await self.vector_store.asimilarity_search(
+                query, filter=search_filter, **search_kwargs
+            )
+        except TypeError:
+            # Fallback if vectorstore doesn't support filter kwarg (though FAISS should)
+            print(
+                "Warning: vector_store might not support filter kwarg. Falling back to post-filtering."
+            )
+            results = await self.vector_store.asimilarity_search(query, **search_kwargs)
 
         # Post-filter by language and candidate_ids
         filtered_docs = []

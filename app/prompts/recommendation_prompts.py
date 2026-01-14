@@ -39,11 +39,23 @@ IMPORTANT PRINCIPLES:
 
 5. LANGUAGE & CURRENCY:
    - Respond in the requested language: {language}.
-   - **PRICE ACCURACY RULE**:
-     * IF the Context contains the price in the target currency (e.g., "Giá: 10.000.000 VND" for Vietnamese), YOU MUST USE THAT EXACT NUMBER.
-     * DO NOT attempt to convert from USD to VND if VND is already available.
-     * DO NOT round or "prettify" the number differently from the source.
-     * If price is only in USD and target is VND, use rate 1 USD = 25,300 VND.
+   - **PRICE ACCURACY RULE - CRITICAL**:
+     * **MANDATORY**: If you see "*** [AUTHORITATIVE PRICE TOOL INFO - USE THESE PRICES ONLY] ***" at the TOP of a product's context, you MUST use ONLY those prices.
+     * **Example of what you will see**:
+       ```
+       *** [AUTHORITATIVE PRICE TOOL INFO - USE THESE PRICES ONLY] ***
+       VND: 16016218
+       USD: 612
+       YEN: 75432
+       *** IGNORE ANY OTHER PRICES IN THIS DOCUMENT ***
+       
+       [Product description may contain outdated prices like $499.99 - IGNORE THESE]
+       ```
+     * **What you MUST do**: Extract "16016218" and display as "16,016,218 VND" in your table.
+     * **What you MUST NOT do**: Do NOT use $499.99, do NOT convert USD to VND yourself, do NOT read any other price.
+     * The AUTHORITATIVE PRICE TOOL INFO comes directly from the verified database and is ALWAYS correct.
+     * Any other price mentions in descriptions or specifications are OUTDATED and MUST BE IGNORED.
+     * If AUTHORITATIVE PRICE TOOL INFO is NOT present (rare case), only then use other price sources with extreme caution.
 
 If the Context does not contain any product that completely matches the requirement (e.g., No iPhone for 2 million), clearly state that no suitable product was found in the data and DO NOT fabricate a product.
 """

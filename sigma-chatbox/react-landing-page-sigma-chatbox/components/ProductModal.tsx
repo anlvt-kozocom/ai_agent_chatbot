@@ -4,9 +4,14 @@ import { Product } from "../types";
 interface ProductModalProps {
   product: Product | null;
   onClose: () => void;
+  onAddToCart: (product: Product) => void;
 }
 
-const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
+const ProductModal: React.FC<ProductModalProps> = ({
+  product,
+  onClose,
+  onAddToCart,
+}) => {
   if (!product) return null;
 
   return (
@@ -189,7 +194,10 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose }) => {
 
           {/* Actions */}
           <div className="mt-auto flex gap-3 md:gap-4 flex-col sm:flex-row">
-            <button className="flex-1 bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-bold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2">
+            <button
+              onClick={() => onAddToCart(product)}
+              className="flex-1 bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-bold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"

@@ -128,13 +128,15 @@ async def recall_node(state: AgentState, config: RunnableConfig) -> dict:
             print(f"DEBUG: Query optimization failed: {e}")
 
     # 2. Execute Recall with Optimized Query
-    # IMPORTANT: For MULTI_PRODUCT strategy, we MUST pass candidate_ids to RAG
-    # so it can filter by product_id metadata and retrieve documents for ALL products.
+    # IMPORTANT: Pass candidate_ids to RAG for filtering by product_id metadata
+    # This is critical for price filtering and multi-product searches
     # For PRODUCT_INFO, we keep candidate_ids=None to allow broad search.
     use_candidate_ids = None
-    if strategy_type == "MULTI_PRODUCT" and candidate_ids:
+    if candidate_ids and state.get("route") != "PRODUCT_INFO":
         use_candidate_ids = candidate_ids
-        print(f"DEBUG: Using candidate_ids for MULTI_PRODUCT: {use_candidate_ids}")
+        print(
+            f"DEBUG: Using candidate_ids for RAG filtering ({len(use_candidate_ids)} products): {use_candidate_ids[:5]}..."
+        )
 
     rag_docs = await rag_service.recall(
         strategy=strategy_type,
@@ -205,15 +207,51 @@ YEN: {price_yen}
         if model_name:
             price_info = price_tool.get_price_by_name(model_name)
             if price_info:
-                # Append Authoritative Info
-                update_str = f"\n\n[AUTHORITATIVE PRICE TOOL INFO]\n"
+                print(
+                    f"DEBUG: ✅ Enriching doc with price for '{model_name}': VND {price_info.get('price_vnd')}"
+                )
+
+                # CRITICAL FIX: Remove ALL old price mentions from content
+                # This prevents LLM from seeing conflicting prices
+                import re
+
+                content = doc.page_content
+
+                # Remove common price patterns (USD, EUR, GBP, etc.)
+                # Pattern: $XXX.XX, €XXX, £XXX, About XXX EUR/USD, etc.
+                price_patterns = [
+                    r"\$\s*[\d,]+\.?\d*",  # $499.99, $500
+                    r"€\s*[\d,]+\.?\d*",  # €499.99
+                    r"£\s*[\d,]+\.?\d*",  # £499.99
+                    r"About\s+\d+\s+(EUR|USD|GBP)",  # About 600 EUR
+                    r"Price:\s*[\$€£][\d,\.]+[\s/\$€£\d,\.]*",  # Price: $500 / €450
+                    r"Giá:\s*[\$€£][\d,\.]+[\s/\$€£\d,\.]*",  # Giá: $500
+                ]
+
+                for pattern in price_patterns:
+                    content = re.sub(
+                        pattern,
+                        "[PRICE REMOVED - SEE AUTHORITATIVE INFO ABOVE]",
+                        content,
+                        flags=re.IGNORECASE,
+                    )
+
+                # CRITICAL: Prepend Authoritative Info at the TOP so LLM sees it FIRST
+                # Use prominent formatting
+                update_str = (
+                    f"*** [AUTHORITATIVE PRICE TOOL INFO - USE THESE PRICES ONLY] ***\n"
+                )
                 update_str += f"VND: {price_info.get('price_vnd', 'N/A')}\n"
                 update_str += f"USD: {price_info.get('price_usd', 'N/A')}\n"
                 update_str += f"YEN: {price_info.get('price_yen', 'N/A')}\n"
+                update_str += f"*** IGNORE ANY OTHER PRICES IN THIS DOCUMENT ***\n\n"
 
-                doc.page_content += update_str
+                # Prepend to cleaned content
+                doc.page_content = update_str + content
                 # Update metadata
                 doc.metadata.update(price_info)
+            else:
+                print(f"DEBUG: ❌ No price found for model_name='{model_name}'")
 
         final_docs.append(doc)
 
