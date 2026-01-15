@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Prompt & Data Manager</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Monaco Editor -->
+    <link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/editor/editor.main.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>📁 Admin Panel</h1>
+                <p class="subtitle">Prompt & Data Manager</p>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" data-section="prompts">
+                    <span class="icon">📝</span>
+                    <span>Prompts</span>
+                </button>
+                <button class="nav-item" data-section="data">
+                    <span class="icon">📊</span>
+                    <span>Data Files</span>
+                </button>
+            </nav>
+
+            <div class="sync-section">
+                <h3>🔄 Vector Store Sync</h3>
+                <button class="sync-btn" id="sync-product" disabled>
+                    <span class="icon">🔄</span>
+                    Sync Product Store
+                </button>
+                <button class="sync-btn" id="sync-warranty">
+                    <span class="icon">🔄</span>
+                    Sync Warranty Store
+                </button>
+                <div class="sync-status" id="sync-status"></div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- File Browser -->
+            <div class="file-browser">
+                <div class="browser-header">
+                    <h2 id="section-title">Prompts</h2>
+                    <div class="breadcrumb" id="breadcrumb">
+                        <span>app/prompts</span>
+                    </div>
+                </div>
+                <div class="file-list" id="file-list">
+                    <div class="loading">Loading files...</div>
+                </div>
+            </div>
+
+            <!-- Editor Panel -->
+            <div class="editor-panel">
+                <div class="editor-header">
+                    <div class="file-info">
+                        <span class="file-name" id="current-file">No file selected</span>
+                        <span class="file-path" id="current-path"></span>
+                    </div>
+                    <div class="editor-actions">
+                        <button class="btn btn-secondary" id="btn-reset" disabled>
+                            ↺ Reset
+                        </button>
+                        <button class="btn btn-primary" id="btn-save" disabled>
+                            💾 Save
+                        </button>
+                    </div>
+                </div>
+                <div class="editor-wrapper">
+                    <div id="editor" class="editor"></div>
+                    <div class="editor-placeholder">
+                        <div class="placeholder-icon">📄</div>
+                        <p>Select a file to edit</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Monaco Editor Scripts -->
+    <script>var require = { paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } };</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/editor/editor.main.nls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/editor/editor.main.js"></script>
+    
+    <!-- App Script -->
+    <script src="app.js"></script>
+</body>
+</html>

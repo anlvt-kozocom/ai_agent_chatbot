@@ -106,6 +106,10 @@ def load_text_files(directory: str) -> List[Document]:
         return []
 
     for filename in os.listdir(directory):
+        # Skip backup files created by admin interface
+        if filename.endswith(".backup"):
+            continue
+
         filepath = os.path.join(directory, filename)
 
         # Handle JSON files

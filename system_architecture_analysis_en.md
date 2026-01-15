@@ -14,12 +14,12 @@ This document provides a comprehensive analysis of the AI Product Agent system a
 
 ## System Architecture Overview
 
-The system consists of 15 interconnected nodes organized into a directed acyclic graph (DAG) with conditional branching. The architecture supports:
+The system consists of 16 interconnected nodes organized into a directed acyclic graph (DAG) with conditional branching. The architecture supports:
 
 - **Multi-turn conversations** with context awareness
 - **Intent-based routing** for different query types
 - **Hybrid data retrieval** combining SQL databases and vector stores
-- **Specialized processing** for comparisons, recommendations, and product information
+- **Specialized processing** for comparisons, recommendations, product information, and warranty policies
 
 ---
 
@@ -61,6 +61,7 @@ The system consists of 15 interconnected nodes organized into a directed acyclic
   - `product_info` - Get details about specific product
   - `general` - General questions about technology/market
   - `recommendation` - Product recommendations based on criteria
+  - `warranty` - Warranty and return policy questions
 - **Technology:** LLM-based intent classification
 - **Input:** Normalized query
 - **Output:** Classified intent + routing decision
@@ -196,6 +197,20 @@ The system consists of 15 interconnected nodes organized into a directed acyclic
 - **Special Flow:** Can route to `requirement_node` if information is missing
 - **Next Node:** `sales_synthesis_node` OR `requirement_node`
 
+#### `warranty_node`
+- **Type:** Policy Information Node
+- **Function:** Answers warranty and return policy questions
+- **Capabilities:**
+  - Retrieves warranty documents from dedicated RAG service
+  - Answers policy-related questions (return periods, coverage, conditions)
+  - Multilingual support (Vietnamese/English)
+  - Context-aware responses based on warranty documents
+- **Data Source:** Separate FAISS vector store for warranty documents
+- **Input:** Warranty/policy question
+- **Output:** Clear answer based on warranty policy documents
+- **Special Flow:** Bypasses product retrieval pipeline, goes directly from router
+- **Next Node:** `__end__` (direct termination, no sales synthesis needed)
+
 ---
 
 ### 9. Information Gathering Layer
@@ -267,6 +282,12 @@ start → context_resolution → router → retrieval_strategy → recall → pr
 start → context_resolution → router → retrieval_strategy → recall → precision → recommendation → requirement → (loops back) → sales_synthesis → end
 ```
 
+### Pattern 6: Warranty Policy Query
+```
+start → context_resolution → router → warranty_node → end
+```
+**Note:** Warranty queries bypass the entire product retrieval pipeline and go directly to the warranty node for policy information.
+
 ---
 
 ## Architectural Strengths
@@ -292,11 +313,11 @@ start → context_resolution → router → retrieval_strategy → recall → pr
 
 ## Graph Characteristics
 
-- **Node Count:** 15 nodes
+- **Node Count:** 16 nodes
 - **Maximum Depth:** 9 hops (start to end)
-- **Branching Points:** 2 major branches (price_filtering vs sql_filtering, then 4-way split at precision)
+- **Branching Points:** 3 major branches (price_filtering vs sql_filtering, 4-way split at precision, warranty shortcut)
 - **Loops:** 1 feedback loop (requirement_node can loop back)
-- **Parallel Paths:** Multiple independent processing paths converge at sales_synthesis
+- **Parallel Paths:** Multiple independent processing paths converge at sales_synthesis (except warranty which terminates directly)
 
 ---
 
@@ -315,6 +336,7 @@ start → context_resolution → router → retrieval_strategy → recall → pr
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0 | 2026-01-14 | Initial architecture analysis |
+| 1.1 | 2026-01-15 | Added warranty_node documentation and updated node count |
 
 ---
 
