@@ -1,0 +1,49 @@
+CHÍNH SÁCH BẢO HÀNH VÀ ĐỔI TRẢ SẢN PHẨM ĐIỆN THOẠI
+1. Quy định về Thời hạn bảo hành
+Bảo hành Máy mới (Brandnew): Cửa hàng bảo hành 12 tháng cho thân máy mới theo tiêu chuẩn của nhà sản xuất.
+
+Bảo hành Máy đã qua sử dụng (Like New/99%): Cửa hàng bảo hành từ 06 đến 12 tháng cho phần cứng bao gồm Mainboard, Nguồn, Wifi, Sóng (thời gian cụ thể tùy thuộc vào gói bảo hành khách hàng đã chọn trên phiếu mua hàng).
+
+Bảo hành Phụ kiện: Các phụ kiện đi kèm như cáp, sạc, tai nghe được bảo hành 01 đến 03 tháng nếu phát sinh lỗi từ nhà sản xuất.
+
+Bảo hành Pin: Pin điện thoại được bảo hành trong 03 tháng. Đối với máy cũ, pin được bảo hành nếu dung lượng (Battery Health) tụt dưới 80% hoặc máy bị sập nguồn đột ngột do pin trong thời gian bảo hành.
+
+2. Chính sách "1 Đổi 1" (Bao test)
+Thời gian áp dụng: Chính sách 1 đổi 1 được áp dụng trong 30 ngày đầu tiên tính từ ngày mua máy in trên phiếu bảo hành.
+
+Điều kiện đổi máy: Sản phẩm phải được kỹ thuật viên xác nhận có lỗi phần cứng do nhà sản xuất.
+
+Hình thức xử lý: Cửa hàng sẽ đổi ngay một sản phẩm tương đương (cùng model, cùng màu, cùng dung lượng). Trong trường hợp hết hàng, cửa hàng sẽ hoàn tiền 100% giá trị máy tại thời điểm mua hoặc hỗ trợ khách hàng đổi sang model khác và bù trừ chênh lệch.
+
+3. Các trường hợp Từ chối bảo hành (Miễn trừ trách nhiệm)
+Cửa hàng KHÔNG nhận bảo hành và chỉ hỗ trợ sửa chữa có tính phí đối với các trường hợp sau:
+
+Lỗi thẩm mỹ ngoại quan: Máy bị trầy xước, cấn móp, cong vỏ, tróc sơn, nứt kính do quá trình sử dụng của khách hàng.
+
+Lỗi do tác động môi trường/vật lý: Máy có dấu hiệu vào nước, giấy quỳ tím bên trong máy đổi màu, máy bị ẩm mốc, oxy hóa linh kiện, cháy nổ, hoặc bị chập điện do sử dụng sạc không đúng quy cách.
+
+Lỗi Màn hình và Cảm ứng: Màn hình bị sọc kẻ, chảy mực, loang màu, đốm sáng, hoặc nứt vỡ trong (do tì đè hoặc va đập). Những lỗi này không thuộc phạm vi bảo hành tiêu chuẩn trừ khi khách hàng có mua gói Bảo Hành Vàng/Bảo hành rơi vỡ.
+
+Điểm chết màn hình: Bảo hành chỉ được kích hoạt nếu màn hình xuất hiện từ 5 điểm chết trở lên. Số lượng dưới 5 điểm chết được coi là dung sai cho phép của nhà sản xuất.
+
+Lỗi Tài khoản và Bảo mật: Máy bị khóa iCloud, Samsung Account, MiCloud, Google Account do khách hàng quên mật khẩu.
+
+Lỗi do can thiệp phần mềm/phần cứng: Máy bị mất IMEI, mất Baseband do khách hàng tự ý Root, Jailbreak, chạy sai bản ROM. Máy mất tem bảo hành hoặc có dấu hiệu bị tháo mở, sửa chữa bởi bên thứ ba không phải là đại diện của cửa hàng.
+
+4. Quy định về Dữ liệu và Tiếp nhận máy
+Miễn trừ trách nhiệm dữ liệu: Cửa hàng hoàn toàn không chịu trách nhiệm về việc mất mát dữ liệu cá nhân (danh bạ, hình ảnh, tin nhắn, ghi chú, ứng dụng ngân hàng...) trong quá trình tiếp nhận bảo hành và sửa chữa.
+
+Yêu cầu sao lưu: Khách hàng bắt buộc phải sao lưu dữ liệu và thoát các tài khoản bảo mật (iCloud/Google) trước khi gửi máy lại cho bộ phận kỹ thuật.
+
+5. Danh sách Câu hỏi thường gặp (Q&A Dataset)
+Q: Máy tôi bị rơi vỡ màn hình thì cửa hàng có bảo hành không? A: Không. Theo chính sách từ chối bảo hành, các lỗi do tác động vật lý như rơi vỡ, cấn móp, nứt kính màn hình sẽ không được bảo hành miễn phí. Cửa hàng chỉ hỗ trợ sửa chữa dịch vụ có tính phí.
+
+Q: Tôi mới mua máy được 1 tuần nhưng máy bị lỗi loa, tôi có được đổi máy mới không? A: Có. Vì máy bạn mua chưa quá 30 ngày và lỗi loa là lỗi phần cứng từ nhà sản xuất, bạn thuộc diện được áp dụng chính sách "1 Đổi 1". Cửa hàng sẽ đổi cho bạn một chiếc máy khác tương đương.
+
+Q: Pin máy tôi dùng nhanh hết, tôi có được thay pin miễn phí không? A: Pin được bảo hành 03 tháng. Nếu bạn đang trong thời gian này và kỹ thuật viên kiểm tra thấy pin bị lỗi (tụt dưới 80% hoặc sập nguồn), bạn sẽ được thay pin miễn phí. Nếu quá 03 tháng, bạn sẽ cần trả phí thay pin.
+
+Q: Khi bảo hành máy, cửa hàng có giữ lại dữ liệu ảnh và danh bạ cho tôi không? A: Không. Cửa hàng không chịu trách nhiệm về dữ liệu. Việc chạy lại phần mềm hoặc sửa chữa phần cứng có thể làm mất toàn bộ dữ liệu. Bạn vui lòng sao lưu dữ liệu trước khi mang máy đến.
+
+Q: Máy tôi bị dính nước mưa, giờ không lên nguồn, có được bảo hành không? A: Không. Máy có dấu hiệu vào nước hoặc giấy quỳ tím đổi màu thuộc trường hợp từ chối bảo hành. Cửa hàng sẽ kiểm tra và báo giá sửa chữa dịch vụ cho bạn.
+
+Q: Màn hình máy tôi tự nhiên bị sọc xanh, không làm rơi, có được bảo hành không? A: Đối với chính sách tiêu chuẩn, lỗi sọc màn hình thường liên quan đến cổ cáp màn hình chịu tác động lực hoặc tì đè và thường bị từ chối bảo hành trừ khi bạn đã mua gói "Bảo Hành Vàng". Tuy nhiên, kỹ thuật viên sẽ kiểm tra kỹ ngoại quan, nếu máy hoàn toàn đẹp, không cấn móp, cửa hàng có thể xem xét hỗ trợ tùy trường hợp cụ thể.

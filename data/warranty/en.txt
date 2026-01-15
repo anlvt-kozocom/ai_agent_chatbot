@@ -1,0 +1,49 @@
+MOBILE PHONE WARRANTY AND RETURN POLICY
+1. Warranty Period Regulations
+Brand-New Devices: The Store provides a 12-month warranty for the device body, adhering to the manufacturer's standards.
+
+Pre-Owned / Like-New Devices (99%): The Store provides a 06 to 12-month warranty for hardware, specifically covering the Mainboard, Power Source, Wi-Fi, and Signal (specific duration depends on the warranty package selected at the time of purchase).
+
+Accessories Warranty: Included accessories such as cables, chargers, and earphones are covered for 01 to 03 months solely for manufacturer defects.
+
+Battery Warranty: Phone batteries are covered for 03 months. For pre-owned devices, the warranty applies if the Battery Health drops below 80% or if the device experiences sudden shutdowns due to battery failure within the warranty period.
+
+2. "1-for-1" Exchange Policy (Testing Period)
+Applicable Period: The 1-for-1 exchange policy is valid for the first 30 days from the purchase date printed on the warranty receipt.
+
+Conditions for Exchange: The product must be confirmed by a technician to have a hardware defect caused by the manufacturer.
+
+Resolution Method: The Store will immediately exchange the defective unit for an equivalent product (same model, same color, same storage capacity). In cases where stock is unavailable, the Store will refund 100% of the purchase value or assist the customer in switching to a different model with a price adjustment.
+
+3. Warranty Exclusions (Liability Waivers)
+The Store DOES NOT provide free warranty coverage and only supports paid repair services for the following cases:
+
+Cosmetic/Aesthetic Damage: Scratches, dents, bent housing, paint peeling, or cracked glass resulting from customer usage.
+
+Environmental/Physical Damage: Devices showing signs of liquid ingress, the internal Liquid Contact Indicator (LCI/litmus paper) has changed color, mold, component oxidation, fire damage, explosion, or electrical shorts due to improper charging equipment.
+
+Screen and Touch Panel Defects: Screens displaying vertical/horizontal lines, ink bleeding, color spreading, bright spots, or internal cracks (caused by pressure or impact). These defects are excluded from the standard warranty unless the customer has purchased a "Gold Warranty" or "Accidental Damage Protection" package.
+
+Dead Pixels: Warranty is only activated if the screen displays 5 or more dead pixels. Fewer than 5 dead pixels are considered within the manufacturer's allowable tolerance.
+
+Account and Security Issues: Devices locked by iCloud, Samsung Account, MiCloud, or Google Account due to the customer forgetting their password.
+
+Unauthorized Software/Hardware Intervention: Devices with lost IMEI or Baseband due to unauthorized Rooting, Jailbreaking, or flashing incorrect ROMs. Devices with missing warranty seals or signs of disassembly/repair by third parties not authorized by the Store.
+
+4. Data and Device Reception Regulations
+Data Liability Waiver: The Store assumes no responsibility for the loss of personal data (contacts, photos, messages, notes, banking apps, etc.) during the warranty intake or repair process.
+
+Backup Requirement: Customers are strictly required to back up their data and sign out of all security accounts (iCloud/Google) before handing the device over to the technical department.
+
+5. Frequently Asked Questions (Q&A Dataset)
+Q: If I drop my phone and the screen breaks, is it covered by the warranty? A: No. According to the warranty exclusion policy, physical damage such as drops, dents, or cracked screens is not covered under the free warranty. The Store only supports paid repair services for these issues.
+
+Q: I bought the phone 1 week ago and the speaker is not working. Can I get a replacement? A: Yes. Since the purchase was made within the last 30 days and the speaker issue is a manufacturer hardware defect, you qualify for the "1-for-1" Exchange Policy. The Store will replace your device with an equivalent unit.
+
+Q: My phone battery drains very quickly. Can I get a free replacement? A: The battery is covered for 03 months. If you are within this period and the technician confirms the battery is defective (health below 80% or sudden shutdowns), you will receive a free replacement. If it exceeds 03 months, a replacement fee will apply.
+
+Q: Will the Store keep my photos and contacts safe during the warranty repair? A: No. The Store is not responsible for data retention. Software reflashing or hardware repairs may result in total data loss. Please back up your data before bringing the device in.
+
+Q: My phone got wet in the rain and won't turn on. Is this covered? A: No. Devices showing signs of water ingress or where the Liquid Contact Indicator has changed color fall under the warranty exclusion list. The Store will inspect the device and provide a quote for service repairs.
+
+Q: My screen suddenly appeared with a green line, and I didn't drop it. Is it covered? A: Under the standard policy, screen line defects are typically related to pressure on the display cable and are often rejected unless you purchased the "Gold Warranty." However, technicians will strictly inspect the physical condition; if the device is pristine with no dents or impact marks, the Store may consider support on a case-by-case basis.

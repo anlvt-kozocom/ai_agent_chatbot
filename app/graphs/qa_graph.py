@@ -13,6 +13,7 @@ from app.agents.price_agent import price_filtering_node
 from app.agents.recall_agent import recall_node
 from app.agents.precision_agent import precision_node
 from app.agents.sql_agent import sql_filtering_node  # NEW: SQL Agent
+from app.agents.warranty_agent import warranty_node  # NEW: Warranty Agent
 
 
 def route_decision(state: AgentState) -> str:
@@ -35,6 +36,9 @@ def route_decision(state: AgentState) -> str:
 
     if route == "RECOMMENDATION":
         return "recommendation_node"
+
+    if route == "WARRANTY":
+        return "warranty_node"
 
     return "general_node"
 
@@ -164,14 +168,26 @@ def build_graph():
         "requirement_node", requirement_node
     )  # Brand requirement gathering
     workflow.add_node("sales_synthesis_node", sales_synthesis_node)  # Final synthesis
+    workflow.add_node("warranty_node", warranty_node)  # NEW: Warranty policy node
 
     # Define edges
     # Start -> Context Resolution -> Router
     workflow.add_edge(START, "context_resolution_node")
     workflow.add_edge("context_resolution_node", "router_node")
 
-    # Router -> Retrieval Strategy (MANDATORY intermediate step)
-    workflow.add_edge("router_node", "retrieval_strategy_node")
+    # Router -> Conditional branching
+    # WARRANTY route goes directly to warranty_node (skips retrieval pipeline)
+    # Other routes go to Retrieval Strategy
+    workflow.add_conditional_edges(
+        "router_node",
+        lambda state: "warranty_node"
+        if state.get("route", "").upper() == "WARRANTY"
+        else "retrieval_strategy_node",
+        {
+            "warranty_node": "warranty_node",
+            "retrieval_strategy_node": "retrieval_strategy_node",
+        },
+    )
 
     # Retrieval Strategy -> Conditional Branching
     # Routes to: SQL Agent (complex), Price Filter (simple), Recall (direct), or General
@@ -212,6 +228,9 @@ def build_graph():
     workflow.add_edge("requirement_node", END)
 
     workflow.add_edge("general_node", "sales_synthesis_node")
+
+    # NEW: Warranty node goes directly to END (no synthesis needed for policy info)
+    workflow.add_edge("warranty_node", END)
 
     # Final step
     workflow.add_edge("sales_synthesis_node", END)

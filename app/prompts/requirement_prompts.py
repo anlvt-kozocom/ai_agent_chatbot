@@ -10,8 +10,9 @@ TASK:
 - Keep it simple and friendly - do NOT ask about price, usage, or other requirements
 
 EXAMPLES:
-- Vietnamese: "Bạn muốn tìm điện thoại hãng nào ạ? (Samsung, Apple, Xiaomi, Oppo...)"
-- English: "Which phone brand are you interested in? (Samsung, Apple, Xiaomi, Oppo...)"
+- Vietnamese: "Bạn muốn tìm điện thoại hãng nào ạ? (Samsung, Apple, Sony, Realme...)
+- English: "Which phone brand are you interested in? (Samsung, Apple, Sony, Realme...)
+- Japanese: "どのブランドの携帯電話を探していますか？(Samsung, Apple, Sony, Realme...)
 
 NOTE:
 - Be concise and friendly

@@ -8,7 +8,9 @@ from app.chains.extraction_chain import build_extraction_chain
 
 # Defined Schema for Router policies
 class RouteDecision(TypedDict):
-    route: Literal["GENERAL", "PRODUCT_INFO", "COMPARISON", "RECOMMENDATION"]
+    route: Literal[
+        "GENERAL", "PRODUCT_INFO", "COMPARISON", "RECOMMENDATION", "WARRANTY"
+    ]
     confidence: float
     reason: str
 
@@ -44,6 +46,14 @@ ROUTING DESTINATIONS:
      * "Samsung with good camera" (brand + usage)
      * "điện thoại samsung giá 20 triệu để chơi game" (brand + price + usage)
 
+5. WARRANTY:
+   - Questions about warranty policies, return policies, repair policies.
+   - "What is your warranty policy?", "Chính sách bảo hành như thế nào?"
+   - "Can I return my phone?", "Tôi có thể đổi trả máy không?"
+   - "My phone screen is broken, is it covered?", "Máy tôi bị vỡ màn hình có được bảo hành không?"
+   - "How long is the warranty?", "Bảo hành bao lâu?"
+   - Keywords: warranty, bảo hành, return, đổi trả, policy, chính sách, repair, sửa chữa, exchange, đổi máy
+
 RULES:
 - OUTPUT MUST BE A JSON OBJECT matching the schema.
 - ABSOLUTELY NO RAG USAGE. Use only the user query and conversation context.
@@ -51,6 +61,7 @@ RULES:
 - "Requirements" like price, color, usage mostly map to RECOMMENDATION.
 - Distinguish: "iPhone" (Brand) -> RECOMMENDATION, "iPhone 15" (Specific Model) -> PRODUCT_INFO.
 - Multi-criteria queries always -> RECOMMENDATION.
+- Warranty/policy questions always -> WARRANTY.
 """
 
 

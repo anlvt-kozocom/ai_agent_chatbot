@@ -10,6 +10,7 @@ import json
 
 from app.graphs.qa_graph import build_graph
 from app.services.rag_service import rag_service
+from app.services.warranty_rag_service import warranty_rag_service  # NEW: Warranty RAG
 from app.utils.callbacks import TokenUsageHandler
 from app.services.usage_store import get_thread_usage
 
@@ -19,10 +20,19 @@ async def lifespan(app: FastAPI):
     # Startup: Initialize RAG service
     # Check env var for reloading data
     reload_data = os.getenv("RELOAD_RAG_DATA", "False").lower() == "true"
+    reload_warranty = os.getenv("RELOAD_WARRANTY_DATA", "False").lower() == "true"
+
     try:
         rag_service.initialize(reload_data=reload_data)
     except Exception as e:
         print(f"Failed to initialize RAG service: {e}")
+
+    # NEW: Initialize warranty RAG service
+    try:
+        warranty_rag_service.initialize(reload_data=reload_warranty)
+    except Exception as e:
+        print(f"Failed to initialize Warranty RAG service: {e}")
+
     yield
     # Shutdown logic if needed
 
@@ -141,6 +151,7 @@ async def chat_stream_endpoint(request: ChatRequest):
                         core_nodes = {
                             "sales_synthesis_node",
                             "requirement_node",  # Stream brand requirement questions
+                            "warranty_node",  # Stream warranty policy responses
                         }
 
                         if node in core_nodes:
